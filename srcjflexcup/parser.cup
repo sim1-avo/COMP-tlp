@@ -1,0 +1,110 @@
+
+terminal SEMI, COMMA, ID, INT, STRING, FLOAT, BOOL, LPAR, RPAR, COLON, PROC, CORP, VOID, IF, THEN, ELIF, FI,
+ELSE, WHILE, DO, OD, READ, WRITE, ASSIGN, PLUS, MINUS, TIMES, DIV, EQ, NE, LT, LE, GT, GE, AND,
+OR, NOT, NULL, TRUE, FALSE, INT_CONST, FLOAT_CONST, STRING_CONST, UMINUS, RETURN;
+
+nonterminal Program, VarDeclList, ProcList, VarDecl, Type, IdListInit, Proc, ReturnExprs,
+ParamDeclList, ParDecl, IdList, ResultType, ResultTypeList, StatList, Stat, IfStat, ElifList, Elif, Else, WhileStat, ReadlnStat,
+WriteStat, AssignStat, CallProc, Expr, ExprList;
+
+precedence left AND, OR;
+precedence left GT, GE,LT, LE, EQ, NE;
+precedence left PLUS, MINUS;
+precedence left TIMES;
+precedence left DIV;
+precedence left UMINUS;
+
+/* The grammar rules */
+Program ::= VarDeclList ProcList
+;
+VarDeclList ::= /* empty */
+   | VarDecl VarDeclList
+   ;
+
+ProcList ::= Proc
+   | Proc ProcList
+   ;
+VarDecl ::= Type IdListInit SEMI
+    ;
+Type ::= INT | BOOL | FLOAT | STRING
+    ;
+IdListInit ::= ID
+   | IdListInit COMMA ID
+   | ID ASSIGN Expr
+   | IdListInit COMMA ID ASSIGN Expr
+   ;
+Proc ::= PROC ID LPAR ParamDeclList RPAR ResultTypeList COLON
+      VarDeclList StatList RETURN ReturnExprs CORP SEMI
+   | PROC ID LPAR RPAR ResultTypeList COLON
+      VarDeclList StatList RETURN ReturnExprs CORP SEMI
+   ;
+ResultTypeList ::= ResultType
+   | ResultType COMMA ResultTypeList
+    ;
+ReturnExprs::=  ExprList
+   | /* empty */
+    ;
+ExprList ::= Expr
+   | Expr COMMA ExprList
+   ;
+ParamDeclList ::= ParDecl | ParamDeclList SEMI ParDecl
+    ;
+ParDecl ::= Type IdList
+    ;
+IdList ::= ID | IdList COMMA ID
+    ;
+ResultType ::= Type | VOID
+    ;
+StatList ::= Stat  | Stat StatList
+    ;
+Stat ::= IfStat SEMI
+   | WhileStat SEMI
+   | ReadlnStat SEMI
+   | WriteStat SEMI
+   | AssignStat SEMI
+   | CallProc SEMI
+   ;
+IfStat ::= IF Expr THEN StatList ElifList Else FI
+   ;
+ElifList ::= /* empty */
+   | Elif ElifList
+   ;
+Elif ::= ELIF Expr THEN StatList
+    ;
+Else ::= /* empty */ | ELSE StatList
+   ;
+WhileStat ::= WHILE StatList RETURN Expr DO StatList OD
+   | WHILE Expr DO StatList OD
+   ;
+ReadlnStat ::= READ LPAR IdList RPAR
+    ;
+WriteStat ::=  WRITE LPAR ExprList RPAR
+    ;
+AssignStat ::= IdList ASSIGN  ExprList
+    ;
+CallProc ::= ID LPAR ExprList RPAR
+   | ID LPAR RPAR
+   ;
+Expr ::= NULL
+   | TRUE
+   | FALSE
+   | INT_CONST
+   | FLOAT_CONST
+   | STRING_CONST
+   | ID
+    | CallProc
+   | Expr  PLUS Expr
+   | Expr  MINUS Expr
+   | Expr  TIMES Expr
+   | Expr  DIV Expr
+   | Expr  AND Expr
+   | Expr  OR Expr
+   | Expr  GT Expr
+   | Expr  GE Expr
+   | Expr  LT Expr
+   | Expr  LE Expr
+   | Expr  EQ Expr
+   | Expr  NE Expr
+   | MINUS Expr %prec UMINUS
+   | NOT Expr
+    ;
