@@ -21,7 +21,7 @@ VarDeclList ::= /* empty */
    | VarDecl VarDeclList
    ;
 
-ProcList ::= Proc
+ProcList ::= ProcStatList
    | Proc ProcList
    ;
 VarDecl ::= Type IdListInit SEMI
@@ -44,19 +44,25 @@ ResultTypeList ::= ResultType
 ReturnExprs::=  ExprList
    | /* empty */
     ;
-ExprList ::= Expr
+ExprList ::= Expr:e {:R=e; :}
    | Expr COMMA ExprList
    ;
+
 ParamDeclList ::= ParDecl | ParamDeclList SEMI ParDecl
     ;
+
 ParDecl ::= Type IdList
     ;
+
 IdList ::= ID | IdList COMMA ID
     ;
+
 ResultType ::= Type | VOID
     ;
+
 StatList ::= Stat  | Stat StatList
     ;
+
 Stat ::= IfStat SEMI
    | WhileStat SEMI
    | ReadlnStat SEMI
@@ -64,6 +70,7 @@ Stat ::= IfStat SEMI
    | AssignStat SEMI
    | CallProc SEMI
    ;
+
 IfStat ::= IF Expr THEN StatList ElifList Else FI
    ;
 ElifList ::= /* empty */
@@ -93,18 +100,18 @@ Expr ::= NULL
    | STRING_CONST
    | ID
     | CallProc
-   | Expr  PLUS Expr
-   | Expr  MINUS Expr
-   | Expr  TIMES Expr
-   | Expr  DIV Expr
-   | Expr  AND Expr
-   | Expr  OR Expr
-   | Expr  GT Expr
-   | Expr  GE Expr
-   | Expr  LT Expr
-   | Expr  LE Expr
-   | Expr  EQ Expr
-   | Expr  NE Expr
-   | MINUS Expr %prec UMINUS
-   | NOT Expr
+   | Expr:e  PLUS Expr:ee   {: R= new PlusOP(e,ee); :}
+   | Expr:e  MINUS Expr:ee  {: R= new MinusOP(e,ee); :}
+   | Expr:e  TIMES Expr:ee  {: R= new TimesOP(e,ee); :}
+   | Expr:e  DIV Expr:ee    {: R= new DivOP(e,ee); :}
+   | Expr:e  AND Expr:ee    {: R= new AndOP(e,ee); :}
+   | Expr:e  OR Expr:ee     {: R= new OrOP(e,ee); :}
+   | Expr:e  GT Expr:ee     {: R= new GreaterThanOP(e,ee); :}
+   | Expr:e  GE Expr:ee     {: R= new GreaterEqualsOP(e,ee); :}
+   | Expr:e  LT Expr:ee     {: R= new LessThanOP(e,ee); :}
+   | Expr:e  LE Expr:ee     {: R= new LessEqualsOP(e,ee); :}
+   | Expr:e  EQ Expr:ee     {: R= new EqualsOP(e,ee); :}
+   | Expr:e  NE Expr:ee    {: R= new NotEqualsOP(e,ee); :}
+   | MINUS Expr:e     {: R=-e; :}%prec UMINUS
+   | NOT Expr:e   {: R= "!"+e; :}
     ;
