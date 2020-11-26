@@ -1,10 +1,11 @@
-
 terminal SEMI, COMMA, ID, INT, STRING, FLOAT, BOOL, LPAR, RPAR, COLON, PROC, CORP, VOID, IF, THEN, ELIF, FI,
 ELSE, WHILE, DO, OD, READ, WRITE, ASSIGN, PLUS, MINUS, TIMES, DIV, EQ, NE, LT, LE, GT, GE, AND,
 OR, NOT, NULL, TRUE, FALSE, INT_CONST, FLOAT_CONST, STRING_CONST, UMINUS, RETURN;
 
 nonterminal Program, VarDeclList, ProcList, VarDecl, Type, IdListInit, Proc, ReturnExprs,
-ParamDeclList, ParDecl, IdList, ResultType, ResultTypeList, StatList, Stat, IfStat, ElifList, Elif, Else, WhileStat, ReadlnStat,
+ParamDeclList, ParDecl, IdList, ResultType, ResultTypeList,
+
+StatList, Stat, IfStat, ElifList, Elif, Else, WhileStat, ReadlnStat,
 WriteStat, AssignStat, CallProc, Expr, ExprList;
 
 precedence left AND, OR;
@@ -26,7 +27,10 @@ ProcList ::= ProcStatList
    ;
 VarDecl ::= Type IdListInit SEMI
     ;
-Type ::= INT | BOOL | FLOAT | STRING
+Type ::= INT
+        | BOOL
+        | FLOAT
+        | STRING
     ;
 IdListInit ::= ID
    | IdListInit COMMA ID
@@ -83,23 +87,23 @@ Else ::= /* empty */ | ELSE StatList
 WhileStat ::= WHILE StatList RETURN Expr DO StatList OD
    | WHILE Expr DO StatList OD
    ;
-ReadlnStat ::= READ LPAR IdList RPAR
+ReadlnStat ::= READ LPAR IdList:ilist RPAR
     ;
-WriteStat ::=  WRITE LPAR ExprList RPAR
+WriteStat ::=  WRITE LPAR ExprList:elist RPAR
     ;
-AssignStat ::= IdList ASSIGN  ExprList
+AssignStat ::= IdList:ilist ASSIGN  ExprList:elist {:R= new AssignOP(ilist, elist);:}
     ;
-CallProc ::= ID LPAR ExprList RPAR
-   | ID LPAR RPAR
+CallProc ::= ID:val LPAR ExprList:elist RPAR {: R= new CallProcOP(val, elist);:}
+   | ID:val LPAR RPAR       {: R= newCallProcOP(val) ;:}
    ;
-Expr ::= NULL
-   | TRUE
-   | FALSE
-   | INT_CONST
-   | FLOAT_CONST
-   | STRING_CONST
-   | ID
-    | CallProc
+Expr ::= NULL               {:R=null;:}
+   | TRUE                   {:R=true;:}
+   | FALSE                  {:R=false;:}
+   | INT_CONST:val          {:R=val ;:}
+   | FLOAT_CONST:val        {:R=val ;:}
+   | STRING_CONST:val       {:R=val ;:}
+   | ID:val                 {:R=val ;:}
+    | CallProc:c            {: R = c;:}
    | Expr:e  PLUS Expr:ee   {: R= new PlusOP(e,ee); :}
    | Expr:e  MINUS Expr:ee  {: R= new MinusOP(e,ee); :}
    | Expr:e  TIMES Expr:ee  {: R= new TimesOP(e,ee); :}
