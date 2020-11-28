@@ -7,7 +7,6 @@ import java.util.ArrayList;
 * This class is a simple example lexer.
 */
 %%
-%class Lexer
 %cup
 %unicode
 %line
@@ -15,23 +14,34 @@ import java.util.ArrayList;
 
 %{
       StringBuffer string = new StringBuffer();
-      public ArrayList<String> SymbolTable= new ArrayList<String>();
+      //public ArrayList<String> SymbolTable= new ArrayList<String>();
 
       private Symbol generateToken(int type) {
         return new Symbol(type);
       }
+
       private Symbol generateToken(int type, Object value) {
+            /*
               if(type==20 && !SymbolTable.contains(value.toString())){
                 SymbolTable.add(value.toString());
               }
               if(type==6){
                   SymbolTable.add(value.toString());
               }
-              return new Symbol(type, SymbolTable.indexOf(value.toString()));
-            }
+              */
 
-      private Symbol generateError(Object value) {
-        return new Symbol(Sym.ERROR, yyline, yycolumn, value);
+              //return new Symbol(type, SymbolTable.indexOf(value.toString()));
+              return new Symbol(type, value.toString());
+      }
+
+      private Symbol generateError(String value) {
+        if(value.equals("string")) {
+            throw new Exception("Errore! Stringa costante non completata.");
+        }
+        if(value.equals("comments")) {
+            throw new Exception("Errore! Commento non chiuso.");
+        }
+        throw new Exception("Errore lessicale nella posizione "+yyline+":"+yycolumn+".");
       }
 
 
@@ -43,8 +53,15 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 Identifier = ([:jletter:] | _ )([:jletterdigit:] | _ )*
 IntegerLiteral = 0 | [1-9][0-9]*
 FloatNumber = (0|[1-9][0-9]*)\.[0-9]*[1-9]+
+StringConst = \" [^] \"
+
+/* comments */
+TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
+
 
 %state STRING
+%state COMMENTS
+
 %%
 <YYINITIAL> {
 
@@ -99,14 +116,38 @@ FloatNumber = (0|[1-9][0-9]*)\.[0-9]*[1-9]+
   {Identifier}          { return generateToken(sym.ID, yytext());}
 
   /* literals */
-  {IntegerLiteral}   { return generateToken(Sym.NUM, Integer.parseInt(yytext())); }
-  {FloatNumber}   { return generateToken(Sym.NUM, Double.parseDouble(yytext())); }
+  {IntegerLiteral}   { return generateToken(sym.INT_CONST, Integer.parseInt(yytext())); }
+  {FloatNumber}   { return generateToken(sym.FLOAT_CONST, Double.parseDouble(yytext())); }
+
+  "true" {return generateToken(sym.TRUE); }
+  "false" {return generateToken(sym.FALSE); }
 
 
   /* whitespace */
   {WhiteSpace} { /* ignore */ }
 }
+
+<STRING> {
+\"          { yybegin(YYINITIAL);
+                return symbol(sym.STRING_CONST,
+                string.toString()); }
+[^\n\r\"\\]+    { string.append( yytext() ); }
+\\t     { string.append("\t"); }
+\\n     { string.append("\n"); }
+\\r     { string.append("\r"); }
+\\\"    { string.append("\""); }
+\\      { string.append("\\"); }
+<<EOF>>     { return generateError("string"); }
+}
+
+<COMMENTS> {
+{TraditionalComment} { /* Ignore */ }
+<<EOF>>     {return generateError("comments"); }
+}
+
+
+
 /* error fallback */
 [^] { return generateError(yytext()); }
 
-<<EOF>> {return new Symbol(Sym.EOF);}
+<<EOF>> {return new Symbol(sym.EOF);}
