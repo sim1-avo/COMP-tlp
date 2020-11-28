@@ -16,52 +16,55 @@ precedence left DIV;
 precedence left UMINUS;
 
 /* The grammar rules */
-Program ::= VarDeclList ProcList
+Program ::= VarDeclList:vdList ProcList:pList         {:R= new ProgramOP(vdList, pList);:}
 ;
-VarDeclList ::= /* empty */
-   | VarDecl VarDeclList
+VarDeclList ::= /* empty */                {:R=null;:}
+   | VarDecl:vd VarDeclList:vdList         {: ArrayList list= new ArrayList(); list.add(vd); list.addAll(vdList); R=list; :}
    ;
 
-ProcList ::= ProcStatList
-   | Proc ProcList
-   ;
-VarDecl ::= Type IdListInit SEMI
-    ;
-Type ::= INT
-        | BOOL
-        | FLOAT
-        | STRING
-    ;
-IdListInit ::= ID
-   | IdListInit COMMA ID
-   | ID ASSIGN Expr
-   | IdListInit COMMA ID ASSIGN Expr
-   ;
-Proc ::= PROC ID LPAR ParamDeclList RPAR ResultTypeList COLON
-      VarDeclList StatList RETURN ReturnExprs CORP SEMI
-   | PROC ID LPAR RPAR ResultTypeList COLON
-      VarDeclList StatList RETURN ReturnExprs CORP SEMI
-   ;
-ResultTypeList ::= ResultType
-   | ResultType COMMA ResultTypeList
-    ;
-ReturnExprs::=  ExprList
-   | /* empty */
-    ;
-ExprList ::= Expr:e {:R=e; :}
-   | Expr COMMA ExprList
-   ;
 
-ParamDeclList ::= ParDecl | ParamDeclList SEMI ParDecl
+ProcList ::= Proc:p                 {: ArrayList list= new ArrayList(); list.add(p);:}
+    |Proc:p ProcList:pList          {: ArrayList list= new ArrayList(); list.add(p); list.addAll(pList); R=list; :}
     ;
 
-ParDecl ::= Type IdList
+VarDecl ::= Type:t IdListInit:iListInit SEMI {:R=VarDeclOP(t,iListInit);:}
+    ;
+Type ::= INT        {:R= 'int';:}
+        | BOOL      {:R= 'bool';:}
+        | FLOAT     {:R= 'float';:}
+        | STRING    {:R= 'String';:}
+    ;
+IdListInit ::= ID:val                                  {: R= new IdListInitOP(val);:}
+   | IdListInit:iListInit COMMA ID:val                 {:ArrayList<IdListInitOP> list= iListInit; list.add(new IdListInitOP(val)); R= list; :}
+   | ID:val ASSIGN Expr:e                              {: R= new IdListInitOP(val, e);:}
+   | IdListInit:iListInit COMMA ID:val ASSIGN Expr:e   {:ArrayList<IdListInitOP> list= iListInit; list.add(new IdListInitOP(val, e)); R= list; :}
+   ;
+Proc ::= PROC ID:val LPAR ParamDeclList:pdList RPAR ResultTypeList:rtList COLON VarDeclList:vdList StatList:sList RETURN ReturnExprs:re CORP SEMI       {:R= new ProcOP(val, pdList, rtList, new ProcBodyOP( vdList, sList, re));:}
+   | PROC ID:val LPAR RPAR ResultTypeList:rtList COLON VarDeclList:vdList StatList:sList RETURN ReturnExprs:re CORP SEMI                                {:R= new ProcOP(val, rtList, new ProcBodyOP( vdList, sList, re));:}
+   ;
+ResultTypeList ::= ResultType:rt                  {:R=rt;:}
+   | ResultType:rt COMMA ResultTypeList:rtList    {: ArrayList list= new ArrayList(); list.add(rt); list.addAll(rtList); R=list; :}
+    ;
+ReturnExprs::=  ExprList:eList {:R=eList;:}
+   | /* empty */                {:R=null;:}
+    ;
+ExprList ::= Expr:e                     {:R=e; :}
+   | Expr:e COMMA ExprList:eList        {: ArrayList list= new ArrayList(); list.add(e); list.addAll(eList); R=list; :}
+   ;
+
+ParamDeclList ::= ParDecl:pd                    {: R=pd; :}
+    | ParamDeclList:pdList SEMI ParDecl:pd      {: ArrayList list= new ArrayList(); list.addAll(pdList);  list.add(pd); R=list; :}
     ;
 
-IdList ::= ID | IdList COMMA ID
+ParDecl ::= Type:t IdList:iList     {:R= new ParDeclOP(t, iList);:}
     ;
 
-ResultType ::= Type | VOID
+IdList ::= ID:val                   {:R= val;:}
+    | IdList:iList COMMA ID:val     {: ArrayList list= new ArrayList();  list.addAll(iList); list.add(val); R=list; :}
+    ;
+
+ResultType ::= Type:t   {:R=t;:}
+            | VOID      {:R= 'void';:}
     ;
 
 StatList ::= Stat:s                  {: R=s; :}
