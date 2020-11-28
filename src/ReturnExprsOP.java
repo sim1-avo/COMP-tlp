@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 //null
 public class ReturnExprsOP {
-    ArrayList ExprList;
+    ArrayList<Expr> ExprList;
 
-    public ReturnExprsOP(ArrayList exprList) {
+    public ReturnExprsOP(ArrayList<Expr> exprList) {
         ExprList = exprList;
     }
 }

@@ -1,20 +1,18 @@
 import java.util.ArrayList;
 
 public class ReadOP extends Stat{
-    private ArrayList<String> idList;
+    private ArrayList<Id> idList;
 
     public ReadOP() {
         super();
-        this.idList=new ArrayList<String>();
+        this.idList=new ArrayList<Id>();
     }
 
-    public ReadOP (ArrayList<String> idList) {
+    public ReadOP (ArrayList<Id> idList) {
         super();
         this.idList=idList;
     }
 
-    public void addId(String id) {
-        this.idList.add(id);
-    }
+
 
 }

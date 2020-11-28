@@ -17,48 +17,48 @@ precedence left UMINUS;
 Program ::= VarDeclList:vdList ProcList:pList         {:R= new ProgramOP(vdList, pList);:}
 ;
 VarDeclList ::= /* empty */                {:R=null;:}
-   | VarDecl:vd VarDeclList:vdList         {: ArrayList list= new ArrayList(); list.add(vd); if(vdList!=null)list.addAll(vdList); R=list; :}
+   | VarDecl:vd VarDeclList:vdList         {: ArrayList<VarDeclOP> list= new ArrayList<VarDeclOP>(); list.add(vd); if(vdList!=null)list.addAll(vdList); R=list; :}
    ;
 
 
-ProcList ::= Proc:p                 {: ArrayList list= new ArrayList(); list.add(p); R= list;:}
-    |Proc:p ProcList:pList          {: ArrayList list= new ArrayList(); list.add(p); list.addAll(pList); R=list; :}
+ProcList ::= Proc:p                 {: ArrayList<ProcOP> list= new ArrayList<ProcOP>(); list.add(p); R= list;:}
+    |Proc:p ProcList:pList          {: ArrayList<ProcOP> list= new ArrayList<ProcOP>(); list.add(p); list.addAll(pList); R=list; :}
     ;
 
-VarDecl ::= Type:t IdListInit:iListInit SEMI {:R=VarDeclOP(t,iListInit);:}
+VarDecl ::= Type:t IdListInit:iListInit SEMI {:R= new VarDeclOP(t,iListInit);:}
     ;
 Type ::= INT        {:R= 'int';:}
         | BOOL      {:R= 'bool';:}
         | FLOAT     {:R= 'float';:}
         | STRING    {:R= 'String';:}
     ;
-IdListInit ::= ID:val                                  {: R= new IdListInitOP(val);:}
-   | IdListInit:iListInit COMMA ID:val                 {:ArrayList<IdListInitOP> list= iListInit; list.add(new IdListInitOP(val)); R= list; :}
-   | ID:val ASSIGN Expr:e                              {: R= new IdListInitOP(val, e);:}
-   | IdListInit:iListInit COMMA ID:val ASSIGN Expr:e   {:ArrayList<IdListInitOP> list= iListInit; list.add(new IdListInitOP(val, e)); R= list; :}
+IdListInit ::= ID:val                                  {: R= new IdListInitOP(new Id(val));:}
+   | IdListInit:iListInit COMMA ID:val                 {:ArrayList<IdListInitOP> list= iListInit; list.add(new IdListInitOP(new Id(val))); R= list; :}
+   | ID:val ASSIGN Expr:e                              {: R= new IdListInitOP(new Id(val), e);:}
+   | IdListInit:iListInit COMMA ID:val ASSIGN Expr:e   {:ArrayList<IdListInitOP> list= iListInit; list.add(new IdListInitOP(new Id(val), e)); R= list; :}
    ;
-Proc ::= PROC ID:val LPAR ParamDeclList:pdList RPAR ResultTypeList:rtList COLON VarDeclList:vdList StatList:sList RETURN ReturnExprs:re CORP SEMI       {:R= new ProcOP(val, pdList, rtList, new ProcBodyOP( vdList, sList, re));:}
-   | PROC ID:val LPAR RPAR ResultTypeList:rtList COLON VarDeclList:vdList StatList:sList RETURN ReturnExprs:re CORP SEMI                                {:R= new ProcOP(val, rtList, new ProcBodyOP( vdList, sList, re));:}
+Proc ::= PROC ID:val LPAR ParamDeclList:pdList RPAR ResultTypeList:rtList COLON VarDeclList:vdList StatList:sList RETURN ReturnExprs:re CORP SEMI       {:R= new ProcOP(new Id(val), pdList, rtList, new ProcBodyOP( vdList, sList, re));:}
+   | PROC ID:val LPAR RPAR ResultTypeList:rtList COLON VarDeclList:vdList StatList:sList RETURN ReturnExprs:re CORP SEMI                                {:R= new ProcOP(new Id(val), rtList, new ProcBodyOP( vdList, sList, re));:}
    ;
-ResultTypeList ::= ResultType:rt                  {: ArrayList list= new ArrayList(); list.add(rt); R= list;:}
-   | ResultType:rt COMMA ResultTypeList:rtList    {: ArrayList list= new ArrayList(); list.add(rt); list.addAll(rtList); R=list; :}
+ResultTypeList ::= ResultType:rt                  {: ArrayList<ResultTypeOP> list= new ArrayList<ResultTypeOP>(); list.add(rt); R= list;:}
+   | ResultType:rt COMMA ResultTypeList:rtList    {: ArrayList<ResultTypeOP> list= new ArrayList<ResultTypeOP>(); list.add(rt); list.addAll(rtList); R=list; :}
     ;
 ReturnExprs::=  ExprList:eList {:R=eList;:}
    | /* empty */                {:R=null;:}
     ;
-ExprList ::= Expr:e                     {: ArrayList list= new ArrayList(); list.add(e); R= list;:}
-   | Expr:e COMMA ExprList:eList        {: ArrayList list= new ArrayList(); list.add(e); list.addAll(eList); R=list; :}
+ExprList ::= Expr:e                     {: ArrayList<Expr> list= new ArrayList<Expr>(); list.add(e); R= list;:}
+   | Expr:e COMMA ExprList:eList        {: ArrayList<Expr> list= new ArrayList<Expr>(); list.add(e); list.addAll(eList); R=list; :}
    ;
 
-ParamDeclList ::= ParDecl:pd                    {: ArrayList list= new ArrayList(); list.add(pd); R= list;:}
-    | ParamDeclList:pdList SEMI ParDecl:pd      {: ArrayList list= new ArrayList(); list.addAll(pdList);  list.add(pd); R=list; :}
+ParamDeclList ::= ParDecl:pd                    {: ArrayList<ParDeclOP> list= new ArrayList<ParDeclOP>(); list.add(pd); R= list;:}
+    | ParamDeclList:pdList SEMI ParDecl:pd      {: ArrayList<ParDeclOP> list= new ArrayList<ParDeclOP>(); list.addAll(pdList);  list.add(pd); R=list; :}
     ;
 
 ParDecl ::= Type:t IdList:iList     {:R= new ParDeclOP(t, iList);:}
     ;
 
-IdList ::= ID:val                   {: ArrayList list= new ArrayList(); list.add(val); R= list;:}
-    | IdList:iList COMMA ID:val     {: ArrayList list= new ArrayList();  list.addAll(iList); list.add(val); R=list; :}
+IdList ::= ID:val                   {: ArrayList<Id> list= new ArrayList<Id>(); list.add(new Id(val)); R= list;:}
+    | IdList:iList COMMA ID:val     {: ArrayList<Id> list= new ArrayList<Id>();  list.addAll(iList); list.add(new Id(val)); R=list; :}
     ;
 
 ResultType ::= Type:t   {:R=t;:}
@@ -99,14 +99,14 @@ AssignStat ::= IdList:ilist ASSIGN  ExprList:elist {:R= new AssignOP(ilist, elis
 CallProc ::= ID:val LPAR ExprList:elist RPAR {: R= new CallProcOP(val, elist);:}
    | ID:val LPAR RPAR       {: R= new CallProcOP(val) ;:}
    ;
-Expr ::= NULL               {:R=null;:}
-   | TRUE                   {:R=true;:}
-   | FALSE                  {:R=false;:}
-   | INT_CONST:val          {:R=val ;:}
-   | FLOAT_CONST:val        {:R=val ;:}
-   | STRING_CONST:val       {:R=val ;:}
-   | ID:val                 {:R=val ;:}
-    | CallProc:c            {: R = c;:}
+Expr ::= NULL               {: R=null;:}
+   | TRUE                   {: R=new Expr(true) ;:}
+   | FALSE                  {: R=new Expr(false) ;:}
+   | INT_CONST:val          {: R=new Expr(val) ;:}
+   | FLOAT_CONST:val        {: R=new Expr(val) ;:}
+   | STRING_CONST:val       {: R=new Expr(val) ;:}
+   | ID:val                 {: R= new Id(val) ;:}
+   | CallProc:c             {: R = c;:}
    | Expr:e  PLUS Expr:ee   {: R= new PlusOP(e,ee); :}
    | Expr:e  MINUS Expr:ee  {: R= new MinusOP(e,ee); :}
    | Expr:e  TIMES Expr:ee  {: R= new TimesOP(e,ee); :}

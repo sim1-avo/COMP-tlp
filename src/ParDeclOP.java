@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public class ParDeclOP {
     String type;
-    ArrayList<String> IdList;
+    ArrayList<Id> IdList;
 
-    public ParDeclOP(String type, ArrayList<String> idList) {
+    public ParDeclOP(String type, ArrayList<Id> idList) {
         this.type = type;
         IdList = idList;
     }

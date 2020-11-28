@@ -4,7 +4,6 @@ public class Expr {
     int valInt;
     String valString;
     float valFloat;
-    String id;
     public Expr(){}
 
     public Expr (Boolean b){
