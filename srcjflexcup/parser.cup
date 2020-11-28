@@ -64,37 +64,39 @@ IdList ::= ID | IdList COMMA ID
 ResultType ::= Type | VOID
     ;
 
-StatList ::= Stat  | Stat StatList
+StatList ::= Stat:s                  {: R=s; :}
+        | Stat:s StatList:sList      {: ArrayList list= new ArrayList(); list.add(s); list.addAll(sList); R=list; :}
     ;
 
-Stat ::= IfStat SEMI
-   | WhileStat SEMI
-   | ReadlnStat SEMI
-   | WriteStat SEMI
-   | AssignStat SEMI
-   | CallProc SEMI
+Stat ::= IfStat:is SEMI     {: R= is; :}
+   | WhileStat:ws SEMI      {: R= ws; :}
+   | ReadlnStat:rs SEMI     {: R= rs; :}
+   | WriteStat:ws SEMI      {: R= ws; :}
+   | AssignStat:as SEMI     {: R= as; :}
+   | CallProc:cp SEMI       {: R= cp; :}
    ;
 
-IfStat ::= IF Expr THEN StatList ElifList Else FI
+IfStat ::= IF Expr:e THEN StatList:sList ElifList:elList Else:el FI {: R= new IfOP(e, sList, elList, el); :}
    ;
-ElifList ::= /* empty */
-   | Elif ElifList
+ElifList ::= /* empty */            {:R= null;:}
+   | Elif:elif ElifList:elList      {: ArrayList list= new ArrayList(); list.add(elif); if(elList != null)list.addAll(elList); R=list; :}
    ;
-Elif ::= ELIF Expr THEN StatList
+Elif ::= ELIF Expr:e THEN StatList:sList {: R=new ElifOP(e, sList); :}
     ;
-Else ::= /* empty */ | ELSE StatList
+Else ::= /* empty */          {: R= null; :}
+    | ELSE StatList:sList     {: R= new ElseOP(sList); :}
    ;
-WhileStat ::= WHILE StatList RETURN Expr DO StatList OD
-   | WHILE Expr DO StatList OD
+WhileStat ::= WHILE StatList:sList1 RETURN Expr:e DO StatList:sList2 OD     {: R= new WhileOP(sList1,e , sList2); :}
+   | WHILE Expr:e DO StatList:sList OD                      {: R= new WhileOP(e,sList); :}
    ;
-ReadlnStat ::= READ LPAR IdList:ilist RPAR
+ReadlnStat ::= READ LPAR IdList:ilist RPAR          {: R= new ReadOP(ilist); :}
     ;
-WriteStat ::=  WRITE LPAR ExprList:elist RPAR
-    ;
+WriteStat ::=  WRITE LPAR ExprList:elist RPAR       {: R= new WriteOP(elist); :}
+;
 AssignStat ::= IdList:ilist ASSIGN  ExprList:elist {:R= new AssignOP(ilist, elist);:}
     ;
 CallProc ::= ID:val LPAR ExprList:elist RPAR {: R= new CallProcOP(val, elist);:}
-   | ID:val LPAR RPAR       {: R= newCallProcOP(val) ;:}
+   | ID:val LPAR RPAR       {: R= new CallProcOP(val) ;:}
    ;
 Expr ::= NULL               {:R=null;:}
    | TRUE                   {:R=true;:}
@@ -116,6 +118,6 @@ Expr ::= NULL               {:R=null;:}
    | Expr:e  LE Expr:ee     {: R= new LessEqualsOP(e,ee); :}
    | Expr:e  EQ Expr:ee     {: R= new EqualsOP(e,ee); :}
    | Expr:e  NE Expr:ee    {: R= new NotEqualsOP(e,ee); :}
-   | MINUS Expr:e     {: R=-e; :}%prec UMINUS
+   | MINUS Expr:e     {: R=-e; :}   %prec UMINUS
    | NOT Expr:e   {: R= "!"+e; :}
     ;
