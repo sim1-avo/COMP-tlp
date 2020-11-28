@@ -65,8 +65,8 @@ ResultType ::= Type:t   {:R=t;:}
             | VOID      {:R= 'void';:}
     ;
 
-StatList ::= Stat:s                  {: ArrayList list= new ArrayList(); list.add(s); R= list;:}
-        | Stat:s StatList:sList      {: ArrayList list= new ArrayList(); list.add(s); list.addAll(sList); R=list; :}
+StatList ::= Stat:s                  {: ArrayList<Stat> list= new ArrayList<Stat>(); list.add(s); R= new BodyOP(s); :}
+        | Stat:s StatList:sList      {: ArrayList<Stat> list= new ArrayList<Stat>(); list.add(s); list.addAll(sList.getStatList()); R= new BodyOP(list); :}
     ;
 
 Stat ::= IfStat:is SEMI     {: R= is; :}
@@ -80,7 +80,7 @@ Stat ::= IfStat:is SEMI     {: R= is; :}
 IfStat ::= IF Expr:e THEN StatList:sList ElifList:elList Else:el FI {: R= new IfOP(e, sList, elList, el); :}
    ;
 ElifList ::= /* empty */            {:R= null;:}
-   | Elif:elif ElifList:elList      {: ArrayList list= new ArrayList(); list.add(elif); if(elList != null)list.addAll(elList); R=list; :}
+   | Elif:elif ElifList:elList      {: ArrayList<ElifOP> list= new ArrayList<ElifOP>(); list.add(elif); if(elList != null)list.addAll(elList); R=list; :}
    ;
 Elif ::= ELIF Expr:e THEN StatList:sList {: R=new ElifOP(e, sList); :}
     ;
