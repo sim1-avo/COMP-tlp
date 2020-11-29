@@ -33,16 +33,10 @@ import java.util.ArrayList;
               //return new Symbol(type, SymbolTable.indexOf(value.toString()));
               return new Symbol(type, value.toString());
       }
-
-      private Symbol generateError(String value) {
-        if(value.equals("string")) {
-            throw new Exception("Errore! Stringa costante non completata.");
-        }
-        if(value.equals("comments")) {
-            throw new Exception("Errore! Commento non chiuso.");
-        }
-        throw new Exception("Errore lessicale nella posizione "+yyline+":"+yycolumn+".");
+      /*
+      private Symbol generateError(String value) throws Exception {
       }
+      */
 
 
 %}
@@ -83,6 +77,8 @@ TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
   "od" {return generateToken(sym.OD);}
   "read" {return generateToken(sym.READ);}
   "write" {return generateToken(sym.WRITE);}
+  "true" {return generateToken(sym.TRUE); }
+  "false" {return generateToken(sym.FALSE); }
 
    /*Operators*/
   "+" {return generateToken(sym.PLUS);}
@@ -114,13 +110,11 @@ TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 
   /* identifiers */
   {Identifier}          { return generateToken(sym.ID, yytext());}
+  \" { string.setLength(0); yybegin(STRING); }
 
   /* literals */
   {IntegerLiteral}   { return generateToken(sym.INT_CONST, Integer.parseInt(yytext())); }
   {FloatNumber}   { return generateToken(sym.FLOAT_CONST, Double.parseDouble(yytext())); }
-
-  "true" {return generateToken(sym.TRUE); }
-  "false" {return generateToken(sym.FALSE); }
 
 
   /* whitespace */
@@ -129,7 +123,7 @@ TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 
 <STRING> {
 \"          { yybegin(YYINITIAL);
-                return symbol(sym.STRING_CONST,
+                return generateToken(sym.STRING_CONST,
                 string.toString()); }
 [^\n\r\"\\]+    { string.append( yytext() ); }
 \\t     { string.append("\t"); }
@@ -137,17 +131,17 @@ TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 \\r     { string.append("\r"); }
 \\\"    { string.append("\""); }
 \\      { string.append("\\"); }
-<<EOF>>     { return generateError("string"); }
+<<EOF>>     { throw new Error("Errore! Stringa costante non completata."); }
 }
 
 <COMMENTS> {
 {TraditionalComment} { /* Ignore */ }
-<<EOF>>     {return generateError("comments"); }
+<<EOF>>     {throw new Error("Errore! Commento non chiuso.");}
 }
 
 
 
 /* error fallback */
-[^] { return generateError(yytext()); }
+[^] { throw new Error("Errore lessicale su "+yytext()+" nella posizione "+yyline+":"+yycolumn+".");}
 
 <<EOF>> {return new Symbol(sym.EOF);}

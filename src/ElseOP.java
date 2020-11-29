@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 
 public class ElseOP {
-    private ArrayList<Stat> sList;
+    private BodyOP sList;
 
-    public ElseOP(ArrayList<Stat> sList) {
+    public ElseOP(BodyOP sList) {
         this.sList=sList;
     }
 
-    public ArrayList<Stat> getsList() {
+    public BodyOP getsList() {
         return sList;
     }
 }

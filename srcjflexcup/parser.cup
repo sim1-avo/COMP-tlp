@@ -1,7 +1,8 @@
+import java.util.ArrayList;
 //terminal
 terminal SEMI, COMMA, INT, STRING, FLOAT, BOOL, LPAR, RPAR, COLON, PROC, CORP, VOID, IF, THEN, ELIF, FI,
 ELSE, WHILE, DO, OD, READ, WRITE, ASSIGN, PLUS, MINUS, TIMES, DIV, EQ, NE, LT, LE, GT, GE, AND,
-OR, NOT, NULL, TRUE, FALSE, INT_CONST, FLOAT_CONST, STRING_CONST, UMINUS, RETURN;
+OR, NOT, NULL, TRUE, FALSE, UMINUS, RETURN;
 
 terminal String ID, STRING_CONST;
 terminal Integer INT_CONST;
@@ -13,7 +14,7 @@ nonterminal CallProcOP CallProc;
 nonterminal AssignOP AssignStat;
 nonterminal ReadOP ReadlnStat;
 nonterminal WriteOP WriteStat;
-nonterminal ReadOP WhileStat;
+nonterminal WhileOP WhileStat;
 nonterminal ElseOP Else;
 nonterminal ElifOP Elif;
 nonterminal ArrayList<ElifOP> ElifList;
@@ -57,10 +58,10 @@ ProcList ::= Proc:p                 {: ArrayList<ProcOP> list= new ArrayList<Pro
 
 VarDecl ::= Type:t IdListInit:iListInit SEMI {:RESULT= new VarDeclOP(t,iListInit);:}
     ;
-Type ::= INT        {:RESULT= 'int';:}
-        | BOOL      {:RESULT= 'bool';:}
-        | FLOAT     {:RESULT= 'float';:}
-        | STRING    {:RESULT= 'String';:}
+Type ::= INT        {:RESULT= "int";:}
+        | BOOL      {:RESULT= "bool";:}
+        | FLOAT     {:RESULT= "float";:}
+        | STRING    {:RESULT= "String";:}
     ;
 IdListInit ::= ID:val                                  {: ArrayList<IdListInitOP> list= new ArrayList<IdListInitOP>(); list.add(new IdListInitOP(new Id(val))); RESULT= list;:}
    | IdListInit:iListInit COMMA ID:val                 {: iListInit.add(new IdListInitOP(new Id(val))); RESULT= iListInit; :}
@@ -92,7 +93,7 @@ IdList ::= ID:val                   {: ArrayList<Id> list= new ArrayList<Id>(); 
     ;
 
 ResultType ::= Type:t   {:RESULT= t; :}
-            | VOID      {:RESULT= 'void';:}
+            | VOID      {:RESULT= "void";:}
     ;
 
 StatList ::= Stat:s                  {: RESULT= new BodyOP(s); :}
@@ -149,6 +150,6 @@ Expr ::= NULL               {: RESULT=null;:}
    | Expr:e  LE Expr:ee     {: RESULT= new LessEqualsOP(e,ee); :}
    | Expr:e  EQ Expr:ee     {: RESULT= new EqualsOP(e,ee); :}
    | Expr:e  NE Expr:ee    {: RESULT= new NotEqualsOP(e,ee); :}
-   | MINUS Expr:e     {: RESULT=-e; :}   %prec UMINUS
-   | NOT Expr:e   {: RESULT= "!"+e; :}
+   | MINUS Expr:e     {: RESULT= new UMinusOP(e); :}   %prec UMINUS
+   | NOT Expr:e   {: RESULT= new NotOP(e); :}
     ;

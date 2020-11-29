@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public class ElifOP {
     private Expr e;
-    private ArrayList<Stat> sList;
+    private BodyOP sList;
 
-    public ElifOP(Expr e, ArrayList<Stat> sList) {
+    public ElifOP(Expr e, BodyOP sList) {
         this.e=e;
         this.sList=sList;
     }
@@ -13,7 +13,7 @@ public class ElifOP {
         return e;
     }
 
-    public ArrayList<Stat> getsList() {
+    public BodyOP getsList() {
         return sList;
     }
 }

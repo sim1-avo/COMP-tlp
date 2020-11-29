@@ -8,6 +8,10 @@ public class CallProcOP {
         this.val=val;
         this.elist=elist;
     }
+    public CallProcOP(String val){
+        this.val=val;
+
+    }
 
     public String getVal() {
         return val;

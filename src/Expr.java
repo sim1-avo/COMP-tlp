@@ -23,6 +23,43 @@ public class Expr {
         this.cp=cp;
     }
 
+    public boolean isBool() {
+        return bool;
+    }
 
+    public void setBool(boolean bool) {
+        this.bool = bool;
+    }
 
+    public int getValInt() {
+        return valInt;
+    }
+
+    public void setValInt(int valInt) {
+        this.valInt = valInt;
+    }
+
+    public String getValString() {
+        return valString;
+    }
+
+    public void setValString(String valString) {
+        this.valString = valString;
+    }
+
+    public float getValFloat() {
+        return valFloat;
+    }
+
+    public void setValFloat(float valFloat) {
+        this.valFloat = valFloat;
+    }
+
+    public CallProcOP getCp() {
+        return cp;
+    }
+
+    public void setCp(CallProcOP cp) {
+        this.cp = cp;
+    }
 }
