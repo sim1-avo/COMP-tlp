@@ -1,6 +1,11 @@
-terminal SEMI, COMMA, ID, INT, STRING, FLOAT, BOOL, LPAR, RPAR, COLON, PROC, CORP, VOID, IF, THEN, ELIF, FI,
+//terminal
+terminal SEMI, COMMA, INT, STRING, FLOAT, BOOL, LPAR, RPAR, COLON, PROC, CORP, VOID, IF, THEN, ELIF, FI,
 ELSE, WHILE, DO, OD, READ, WRITE, ASSIGN, PLUS, MINUS, TIMES, DIV, EQ, NE, LT, LE, GT, GE, AND,
 OR, NOT, NULL, TRUE, FALSE, INT_CONST, FLOAT_CONST, STRING_CONST, UMINUS, RETURN;
+
+terminal String ID, STRING_CONST;
+terminal Integer INT_CONST;
+terminal float FLOAT_CONST;
 
 /* Non terminals */
 nonterminal Expr Expr;
@@ -144,6 +149,6 @@ Expr ::= NULL               {: RESULT=null;:}
    | Expr:e  LE Expr:ee     {: RESULT= new LessEqualsOP(e,ee); :}
    | Expr:e  EQ Expr:ee     {: RESULT= new EqualsOP(e,ee); :}
    | Expr:e  NE Expr:ee    {: RESULT= new NotEqualsOP(e,ee); :}
-   | MINUS Expr:e     {: R=-e; :}   %prec UMINUS
-   | NOT Expr:e   {: R= "!"+e; :}
+   | MINUS Expr:e     {: RESULT=-e; :}   %prec UMINUS
+   | NOT Expr:e   {: RESULT= "!"+e; :}
     ;
