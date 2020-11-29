@@ -12,4 +12,7 @@ public class IdListInitOP {
         this.id = id;
         this.expr = expr;
     }
+    public IdListInitOP(Id id) {
+        this.id = id;
+    }
 }
