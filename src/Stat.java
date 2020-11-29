@@ -3,4 +3,5 @@ public class Stat {
     public Stat(CallProcOP cp) {
         this.cp=cp;
     }
+    public Stat() {}
 }
