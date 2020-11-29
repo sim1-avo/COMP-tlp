@@ -2,10 +2,24 @@ terminal SEMI, COMMA, ID, INT, STRING, FLOAT, BOOL, LPAR, RPAR, COLON, PROC, COR
 ELSE, WHILE, DO, OD, READ, WRITE, ASSIGN, PLUS, MINUS, TIMES, DIV, EQ, NE, LT, LE, GT, GE, AND,
 OR, NOT, NULL, TRUE, FALSE, INT_CONST, FLOAT_CONST, STRING_CONST, UMINUS, RETURN;
 
+/* Non terminals */
 nonterminal Program, VarDeclList, ProcList, VarDecl, Type, IdListInit, Proc, ReturnExprs,
-ParamDeclList, ParDecl, IdList, ResultType, ResultTypeList, StatList, Stat, IfStat, ElifList, Elif, Else, WhileStat, ReadlnStat,
-WriteStat, AssignStat, CallProc, Expr, ExprList;
+ParamDeclList, ParDecl, IdList, ResultType, ResultTypeListExprList;
 
+nonterminal Expr Expr;
+nonterminal CallProcOP CallProc;
+nonterminal AssignOP AssignStat;
+nonterminal ReadOP ReadlnStat;
+nonterminal WriteOP WriteStat;
+nonterminal ReadOP WhileStat;
+nonterminal ElseOP Else;
+nonterminal ElifOP Elif;
+nonterminal ArrayList<ElifOP> ElifList;
+nonterminal IfOP IfStat;
+nonterminal Stat Stat;
+nonterminal BodyOP StatList;
+
+/* Precedences */
 precedence left AND, OR;
 precedence left GT, GE,LT, LE, EQ, NE;
 precedence left PLUS, MINUS;
@@ -65,60 +79,60 @@ ResultType ::= Type:t   {:R=t;:}
             | VOID      {:R= 'void';:}
     ;
 
-StatList ::= Stat:s                  {: ArrayList<Stat> list= new ArrayList<Stat>(); list.add(s); R= new BodyOP(s); :}
-        | Stat:s StatList:sList      {: ArrayList<Stat> list= new ArrayList<Stat>(); list.add(s); list.addAll(sList.getStatList()); R= new BodyOP(list); :}
+StatList ::= Stat:s                  {: RESULT= new BodyOP(s); :}
+        | Stat:s StatList:sList      {: ArrayList<Stat> list= new ArrayList<Stat>(); list.add(s); list.addAll(sList.getStatList()); RESULT= new BodyOP(list); :}
     ;
 
-Stat ::= IfStat:is SEMI     {: R= is; :}
-   | WhileStat:ws SEMI      {: R= ws; :}
-   | ReadlnStat:rs SEMI     {: R= rs; :}
-   | WriteStat:ws SEMI      {: R= ws; :}
-   | AssignStat:as SEMI     {: R= as; :}
-   | CallProc:cp SEMI       {: R= cp; :}
+Stat ::= IfStat:is SEMI     {: RESULT= is; :}
+   | WhileStat:ws SEMI      {: RESULT= ws; :}
+   | ReadlnStat:rs SEMI     {: RESULT= rs; :}
+   | WriteStat:ws SEMI      {: RESULT= ws; :}
+   | AssignStat:as SEMI     {: RESULT= as; :}
+   | CallProc:cp SEMI       {: RESULT= new Stat(cp); :}
    ;
 
-IfStat ::= IF Expr:e THEN StatList:sList ElifList:elList Else:el FI {: R= new IfOP(e, sList, elList, el); :}
+IfStat ::= IF Expr:e THEN StatList:sList ElifList:elList Else:el FI {: RESULT= new IfOP(e, sList, elList, el); :}
    ;
-ElifList ::= /* empty */            {:R= null;:}
-   | Elif:elif ElifList:elList      {: ArrayList<ElifOP> list= new ArrayList<ElifOP>(); list.add(elif); if(elList != null)list.addAll(elList); R=list; :}
+ElifList ::= /* empty */            {:RESULT= new ArrayList<ElifOP>();:}
+   | Elif:elif ElifList:elList      {: elList.add(0, elif); RESULT=elList; :}
    ;
-Elif ::= ELIF Expr:e THEN StatList:sList {: R=new ElifOP(e, sList); :}
+Elif ::= ELIF Expr:e THEN StatList:sList {: RESULT=new ElifOP(e, sList); :}
     ;
-Else ::= /* empty */          {: R= null; :}
-    | ELSE StatList:sList     {: R= new ElseOP(sList); :}
+Else ::= /* empty */          {: RESULT= null; :}
+    | ELSE StatList:sList     {: RESULT= new ElseOP(sList); :}
    ;
-WhileStat ::= WHILE StatList:sList1 RETURN Expr:e DO StatList:sList2 OD     {: R= new WhileOP(sList1,e , sList2); :}
-   | WHILE Expr:e DO StatList:sList OD                      {: R= new WhileOP(e,sList); :}
+WhileStat ::= WHILE StatList:sList1 RETURN Expr:e DO StatList:sList2 OD     {: RESULT= new WhileOP(sList1,e , sList2); :}
+   | WHILE Expr:e DO StatList:sList OD                      {: RESULT= new WhileOP(e,sList); :}
    ;
-ReadlnStat ::= READ LPAR IdList:ilist RPAR          {: R= new ReadOP(ilist); :}
+ReadlnStat ::= READ LPAR IdList:ilist RPAR          {: RESULT= new ReadOP(ilist); :}
     ;
-WriteStat ::=  WRITE LPAR ExprList:elist RPAR       {: R= new WriteOP(elist); :}
+WriteStat ::=  WRITE LPAR ExprList:elist RPAR       {: RESULT= new WriteOP(elist); :}
 ;
-AssignStat ::= IdList:ilist ASSIGN  ExprList:elist {:R= new AssignOP(ilist, elist);:}
+AssignStat ::= IdList:ilist ASSIGN  ExprList:elist {:RESULT= new AssignOP(ilist, elist);:}
     ;
-CallProc ::= ID:val LPAR ExprList:elist RPAR {: R= new CallProcOP(val, elist);:}
-   | ID:val LPAR RPAR       {: R= new CallProcOP(val) ;:}
+CallProc ::= ID:val LPAR ExprList:elist RPAR {: RESULT= new CallProcOP(val, elist);:}
+   | ID:val LPAR RPAR       {: RESULT= new CallProcOP(val) ;:}
    ;
-Expr ::= NULL               {: R=null;:}
-   | TRUE                   {: R=new Expr(true) ;:}
-   | FALSE                  {: R=new Expr(false) ;:}
-   | INT_CONST:val          {: R=new Expr(val) ;:}
-   | FLOAT_CONST:val        {: R=new Expr(val) ;:}
-   | STRING_CONST:val       {: R=new Expr(val) ;:}
-   | ID:val                 {: R= new Id(val) ;:}
-   | CallProc:c             {: R = c;:}
-   | Expr:e  PLUS Expr:ee   {: R= new PlusOP(e,ee); :}
-   | Expr:e  MINUS Expr:ee  {: R= new MinusOP(e,ee); :}
-   | Expr:e  TIMES Expr:ee  {: R= new TimesOP(e,ee); :}
-   | Expr:e  DIV Expr:ee    {: R= new DivOP(e,ee); :}
-   | Expr:e  AND Expr:ee    {: R= new AndOP(e,ee); :}
-   | Expr:e  OR Expr:ee     {: R= new OrOP(e,ee); :}
-   | Expr:e  GT Expr:ee     {: R= new GreaterThanOP(e,ee); :}
-   | Expr:e  GE Expr:ee     {: R= new GreaterEqualsOP(e,ee); :}
-   | Expr:e  LT Expr:ee     {: R= new LessThanOP(e,ee); :}
-   | Expr:e  LE Expr:ee     {: R= new LessEqualsOP(e,ee); :}
-   | Expr:e  EQ Expr:ee     {: R= new EqualsOP(e,ee); :}
-   | Expr:e  NE Expr:ee    {: R= new NotEqualsOP(e,ee); :}
+Expr ::= NULL               {: RESULT=null;:}
+   | TRUE                   {: RESULT=new Expr(true) ;:}
+   | FALSE                  {: RESULT=new Expr(false) ;:}
+   | INT_CONST:val          {: RESULT=new Expr(val) ;:}
+   | FLOAT_CONST:val        {: RESULT=new Expr(val) ;:}
+   | STRING_CONST:val       {: RESULT=new Expr(val) ;:}
+   | ID:val                 {: RESULT= new Id(val) ;:}
+   | CallProc:c             {: RESULT=new Expr(c); :}
+   | Expr:e  PLUS Expr:ee   {: RESULT= new PlusOP(e,ee); :}
+   | Expr:e  MINUS Expr:ee  {: RESULT= new MinusOP(e,ee); :}
+   | Expr:e  TIMES Expr:ee  {: RESULT= new TimesOP(e,ee); :}
+   | Expr:e  DIV Expr:ee    {: RESULT= new DivOP(e,ee); :}
+   | Expr:e  AND Expr:ee    {: RESULT= new AndOP(e,ee); :}
+   | Expr:e  OR Expr:ee     {: RESULT= new OrOP(e,ee); :}
+   | Expr:e  GT Expr:ee     {: RESULT= new GreaterThanOP(e,ee); :}
+   | Expr:e  GE Expr:ee     {: RESULT= new GreaterEqualsOP(e,ee); :}
+   | Expr:e  LT Expr:ee     {: RESULT= new LessThanOP(e,ee); :}
+   | Expr:e  LE Expr:ee     {: RESULT= new LessEqualsOP(e,ee); :}
+   | Expr:e  EQ Expr:ee     {: RESULT= new EqualsOP(e,ee); :}
+   | Expr:e  NE Expr:ee    {: RESULT= new NotEqualsOP(e,ee); :}
    | MINUS Expr:e     {: R=-e; :}   %prec UMINUS
    | NOT Expr:e   {: R= "!"+e; :}
     ;

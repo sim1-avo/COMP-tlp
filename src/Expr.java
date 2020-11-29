@@ -4,6 +4,7 @@ public class Expr {
     int valInt;
     String valString;
     float valFloat;
+    CallProcOP cp;
     public Expr(){}
 
     public Expr (Boolean b){
@@ -17,6 +18,9 @@ public class Expr {
     }
     public Expr (String val){
         this.valString=val;
+    }
+    public Expr (CallProcOP cp) {
+        this.cp=cp;
     }
 
 

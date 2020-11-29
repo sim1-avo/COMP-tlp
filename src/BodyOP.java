@@ -11,7 +11,8 @@ public class BodyOP {
         this.statList=new ArrayList<Stat>();
     }
 
-    public void addStat(Stat s) {
+    public BodyOP(Stat s) {
+        this.statList=new ArrayList<Stat>();
         statList.add(s);
     }
 

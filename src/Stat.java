@@ -1,3 +1,6 @@
 public class Stat {
-    public Stat() {}
+    private CallProcOP cp;
+    public Stat(CallProcOP cp) {
+        this.cp=cp;
+    }
 }
