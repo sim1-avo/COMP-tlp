@@ -44,7 +44,7 @@ LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f]
 
-Identifier = ([:jletter:] | _ )([:jletterdigit:] | _ )*
+Identifier = [:jletter:][:jletterdigit:]*
 IntegerLiteral = 0 | [1-9][0-9]*
 FloatNumber = (0|[1-9][0-9]*)\.[0-9]*[1-9]+
 StringConst = \" [^] \"
@@ -68,7 +68,7 @@ TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
   "while" { return generateToken(sym.WHILE); }
   "int" { return generateToken(sym.INT); }
   "float" { return generateToken(sym.FLOAT); }
-  "String" {return generateToken(sym.STRING);}
+  "string" {return generateToken(sym.STRING);}
   "bool" {return generateToken(sym.BOOL);}
   "proc" {return generateToken(sym.PROC);}
   "corp" {return generateToken(sym.CORP);}
