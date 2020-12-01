@@ -9,6 +9,6 @@ public class Tester {
         Reader reader = new InputStreamReader(in);
 
         parser p = new parser(new Yylex(reader));
-        System.out.println(p.debug_parse());
+        System.out.println(p.parse().value);
     }
 }

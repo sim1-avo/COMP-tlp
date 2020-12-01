@@ -1139,8 +1139,8 @@ class CUP$parser$actions {
               Expr RESULT =null;
 		int valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int valright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
-		Integer val = (Integer)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 RESULT=new Expr(val) ;
+		String val = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 int x= Integer.parseInt(val); RESULT=new Expr(x) ;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Expr",0, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

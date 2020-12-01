@@ -5,7 +5,7 @@ ELSE, WHILE, DO, OD, READ, WRITE, ASSIGN, PLUS, MINUS, TIMES, DIV, EQ, NE, LT, L
 OR, NOT, NULL, TRUE, FALSE, UMINUS, RETURN;
 
 terminal String ID, STRING_CONST;
-terminal Integer INT_CONST;
+terminal String INT_CONST;
 terminal float FLOAT_CONST;
 
 /* Non terminals */
@@ -133,7 +133,7 @@ CallProc ::= ID:val LPAR ExprList:elist RPAR {: RESULT= new CallProcOP(val, elis
 Expr ::= NULL               {: RESULT=null;:}
    | TRUE                   {: RESULT=new Expr(true) ;:}
    | FALSE                  {: RESULT=new Expr(false) ;:}
-   | INT_CONST:val          {: RESULT=new Expr(val) ;:}
+   | INT_CONST:val          {: int x= Integer.parseInt(val); RESULT=new Expr(x) ;:}
    | FLOAT_CONST:val        {: RESULT=new Expr(val) ;:}
    | STRING_CONST:val       {: RESULT=new Expr(val) ;:}
    | ID:val                 {: RESULT= new Id(val) ;:}

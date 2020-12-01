@@ -13,10 +13,11 @@ corp;
 
 
 proc writeNewLines(int n)void :
-	while n >0 do
+	while n > 0 do
 		write("\n");
 		n := n -1;
 	od;
+	->
 corp;
 
 
@@ -26,4 +27,5 @@ proc main()void :
 	write ("Ciao ", nome);
 	write("I tuoi valori sono:\n", a, " per la moltiplicazione\n", b, 
 		" per la somma, e \n", c, " per la differenza");
+		->
 corp;
