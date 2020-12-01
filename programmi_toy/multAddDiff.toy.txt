@@ -8,7 +8,7 @@ proc multAddDiff ()int, int, int :
 	write("Inserire il secondo argomento:\n");
 	readln(secondo);
 	mul, add, diff := primo*secondo, primo + secondo, primo - secondo;
-	mul, add, diff;
+	-> mul, add, diff
 corp;
 
 
