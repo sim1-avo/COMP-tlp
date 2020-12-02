@@ -10,4 +10,32 @@ public class ProcBodyOP {
         this.sList= sList;
         this.re = re;
     }
+
+    public ArrayList<VarDeclOP> getVdList() {
+        return vdList;
+    }
+
+    public void setVdList(ArrayList<VarDeclOP> vdList) {
+        this.vdList = vdList;
+    }
+
+    public BodyOP getsList() {
+        return sList;
+    }
+
+    public void setsList(BodyOP sList) {
+        this.sList = sList;
+    }
+
+    public ArrayList<Expr> getRe() {
+        return re;
+    }
+
+    public void setRe(ArrayList<Expr> re) {
+        this.re = re;
+    }
+
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 }

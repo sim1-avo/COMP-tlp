@@ -13,6 +13,18 @@ public class ReadOP extends Stat{
         this.idList=idList;
     }
 
+    public ArrayList<Id> getIdList() {
+        return idList;
+    }
+
+    public void setIdList(ArrayList<Id> idList) {
+        this.idList = idList;
+    }
+
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
+
 
 
 }

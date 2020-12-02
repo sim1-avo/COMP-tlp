@@ -23,4 +23,40 @@ public class ProcOP {
         this.procBodyOP=procBodyOP;
         this.rtList=rtList;
     }
+
+    public Id getId() {
+        return id;
+    }
+
+    public void setId(Id id) {
+        this.id = id;
+    }
+
+    public ArrayList<ParDeclOP> getPdList() {
+        return pdList;
+    }
+
+    public void setPdList(ArrayList<ParDeclOP> pdList) {
+        this.pdList = pdList;
+    }
+
+    public ArrayList<String> getRtList() {
+        return rtList;
+    }
+
+    public void setRtList(ArrayList<String> rtList) {
+        this.rtList = rtList;
+    }
+
+    public ProcBodyOP getProcBodyOP() {
+        return procBodyOP;
+    }
+
+    public void setProcBodyOP(ProcBodyOP procBodyOP) {
+        this.procBodyOP = procBodyOP;
+    }
+
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 }

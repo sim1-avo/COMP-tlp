@@ -11,4 +11,12 @@ public class WriteOP extends Stat{
     public ArrayList<Expr> getExprList() {
         return exprList;
     }
+
+    public void setExprList(ArrayList<Expr> exprList) {
+        this.exprList = exprList;
+    }
+
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 }

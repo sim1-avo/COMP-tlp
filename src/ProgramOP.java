@@ -9,5 +9,23 @@ public class ProgramOP {
         this.VarDeclList= VarDeclListOP;
 
     }
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 
+    public ArrayList<VarDeclOP> getVarDeclList() {
+        return VarDeclList;
+    }
+
+    public void setVarDeclList(ArrayList<VarDeclOP> varDeclList) {
+        VarDeclList = varDeclList;
+    }
+
+    public ArrayList<ProcOP> getProcList() {
+        return ProcList;
+    }
+
+    public void setProcList(ArrayList<ProcOP> procList) {
+        ProcList = procList;
+    }
 }

@@ -62,4 +62,7 @@ public class Expr {
     public void setCp(CallProcOP cp) {
         this.cp = cp;
     }
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 }

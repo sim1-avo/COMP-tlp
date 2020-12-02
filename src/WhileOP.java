@@ -28,4 +28,20 @@ public class WhileOP extends Stat {
     public Expr getE() {
         return e;
     }
+
+    public void setsList1(BodyOP sList1) {
+        this.sList1 = sList1;
+    }
+
+    public void setsList2(BodyOP sList2) {
+        this.sList2 = sList2;
+    }
+
+    public void setE(Expr e) {
+        this.e = e;
+    }
+
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 }

@@ -16,8 +16,15 @@ public class BodyOP {
         statList.add(s);
     }
 
+    public void setStatList(ArrayList<Stat> statList) {
+        this.statList = statList;
+    }
+
     public ArrayList<Stat> getStatList() {
         return statList;
+    }
+    public Object accept(Visitor v){
+        return v.visit(this);
     }
 
 }

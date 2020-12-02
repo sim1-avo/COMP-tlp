@@ -10,4 +10,24 @@ public class VarDeclOP {
         IdListInit = idListInit;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public ArrayList<IdListInitOP> getIdListInit() {
+        return IdListInit;
+    }
+
+    public void setIdListInit(ArrayList<IdListInitOP> idListInit) {
+        IdListInit = idListInit;
+    }
+
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
+
 }

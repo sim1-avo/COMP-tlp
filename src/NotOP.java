@@ -7,6 +7,15 @@ public class NotOP extends Expr {
         this.ne="!"+expr;
     }
 
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 
+    public String getNe() {
+        return ne;
+    }
 
+    public void setNe(String ne) {
+        this.ne = ne;
+    }
 }

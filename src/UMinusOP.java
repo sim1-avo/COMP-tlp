@@ -5,4 +5,24 @@ public class UMinusOP extends Expr{
     public UMinusOP(Expr e){
         this.i= 0 - e.getValInt();
     }
+
+    public Expr getE() {
+        return e;
+    }
+
+    public void setE(Expr e) {
+        this.e = e;
+    }
+
+    public int getI() {
+        return i;
+    }
+
+    public void setI(int i) {
+        this.i = i;
+    }
+
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 }

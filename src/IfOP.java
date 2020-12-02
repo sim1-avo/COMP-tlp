@@ -29,4 +29,24 @@ public class IfOP extends Stat{
     public ElseOP getEl() {
         return el;
     }
+
+    public void setE(Expr e) {
+        this.e = e;
+    }
+
+    public void setsList(BodyOP sList) {
+        this.sList = sList;
+    }
+
+    public void setElList(ArrayList<ElifOP> elList) {
+        this.elList = elList;
+    }
+
+    public void setEl(ElseOP el) {
+        this.el = el;
+    }
+
+    public Object accept(Visitor v){
+        return v.visit(this);
+    }
 }
