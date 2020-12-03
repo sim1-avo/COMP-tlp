@@ -1,8 +1,42 @@
+import java.io.File;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 public class GenerateXML implements Visitor{
+
+    private Document document;
+
+    public GenerateXML () throws ParserConfigurationException {
+        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+        document = documentBuilder.newDocument();
+    }
 
     @Override
     public Object visit(ProgramOP p) {
-        return null;
+        Element programOP = document.createElement("ProgramOP");
+
+        for (VarDeclOP var :p.getVarDeclList() ) {
+            Element l= (Element) var.accept(this);
+            programOP.appendChild(l);
+        }
+
+        for (ProcOP var: p.getProcList()) {
+            Element r= (Element) var.accept(this);
+            //TODO
+        }
+        //TODO right
+
+        return 0;
     }
 
     @Override
@@ -21,7 +55,14 @@ public class GenerateXML implements Visitor{
     }
 
     @Override
-    public Object visit(CallProcOP c) {
+    public Object visit(CallProcOP cp) {
+        Element callProcOP =document.createElement("CallProcOP");
+        callProcOP.appendChild(document.createTextNode("(ID,\""+cp.getVal()+"\")"));
+        for(Expr e : cp.getElist()) {
+            Object o = e.accept(this);
+            //TODO
+        }
+        //TODO
         return null;
     }
 
@@ -61,13 +102,14 @@ public class GenerateXML implements Visitor{
     }
 
     @Override
-    public Object visit(Id c) {
-        return null;
+    public Object visit(Id id) {
+        return "(ID, \""+id.getId()+"\")";
     }
 
     @Override
-    public Object visit(IdListInitOP c) {
-        return null;
+    public Object visit(IdListInitOP x) {
+        if(x.getExpr() != null) return "(ID, \""+x.getId()+"\") (\""+ x.getExpr() +"\")";
+         else return "(ID, \""+x.getId()+"\")";
     }
 
     @Override
@@ -106,17 +148,62 @@ public class GenerateXML implements Visitor{
     }
 
     @Override
-    public Object visit(ParDeclOP c) {
+    public Object visit(ParDeclOP p) {
+        Element parDeclOp=document.createElement("ParDeclOp");
+        parDeclOp.appendChild(document.createTextNode(p.type.toString()));
+        String id_tot="";
+        for(Id id : p.getIdList()) {
+            String s =(String) id.accept(this);
+            id_tot.concat(s);
+            id_tot.concat(" ");
+            //TODO
+        }
+        Element idOp=document.createElement("IdOp");
+        idOp.appendChild(document.createTextNode(id_tot));
+        parDeclOp.appendChild(idOp);
+
+        return parDeclOp;
+    }
+
+    @Override
+    public Object visit(ProcBodyOP pb) {
+        Element procBodyOP = document.createElement("ProcBodyOP");
+
+        for (VarDeclOP var : pb.getVdList() ) {
+            Element l= (Element) var.accept(this);
+            procBodyOP.appendChild(l);
+        }
+
+        for(Stat s : pb.getsList().getStatList()) {
+            Object o=s.accept(this);
+            //TODO
+        }
+
+        for(Expr e : pb.getRe()) {
+            Object o=e.accept(this);
+            //TODO
+        }
+        //TODO
         return null;
     }
 
     @Override
-    public Object visit(ProcBodyOP c) {
-        return null;
-    }
+    public Object visit(ProcOP p) {
+        Element procOP= document.createElement("ProcOP");
+        procOP.appendChild(document.createTextNode(p.getId().toString()));
+        for (ParDeclOP parDecl  : p.getPdList()) {
+            Element parDeclOP= (Element) parDecl.accept(this);
+            procOP.appendChild(parDeclOP);
+        }
+        String resultType = "";
+        for (String s: p.getRtList()) {
+            resultType.concat("("+s+")");
+        }
+        Element resultTypeListOp = document.createElement("ResultTypeListOp");
+        resultTypeListOp.appendChild(document.createTextNode(resultType));
+        Object last= p.getProcBodyOP().accept(this);
+        //TODO
 
-    @Override
-    public Object visit(ProcOP c) {
         return null;
     }
 
@@ -131,7 +218,10 @@ public class GenerateXML implements Visitor{
     }
 
     @Override
-    public Object visit(Stat c) {
+    public Object visit(Stat s) {
+        Object o= s.getCp().accept(this);
+        //TODO
+
         return null;
     }
 
@@ -147,7 +237,19 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(VarDeclOP c) {
-        return null;
+        Element varDeclOp=document.createElement("VarDeclOp");
+        varDeclOp.appendChild(document.createTextNode(c.getType()));
+        String r_tot="";
+        for(IdListInitOP idList : c.getIdListInit()) {
+            String r= (String)idList.accept(this);
+            r_tot=r_tot.concat(r);
+            r_tot=r_tot.concat(" ");
+        }
+        Element idListInitOp = document.createElement("IdListInitOp");
+        idListInitOp.appendChild(document.createTextNode(r_tot));
+        varDeclOp.appendChild(idListInitOp);
+
+        return varDeclOp;
     }
 
     @Override
