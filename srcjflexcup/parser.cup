@@ -4,9 +4,8 @@ terminal SEMI, COMMA, INT, STRING, FLOAT, BOOL, LPAR, RPAR, COLON, PROC, CORP, V
 ELSE, WHILE, DO, OD, READ, WRITE, ASSIGN, PLUS, MINUS, TIMES, DIV, EQ, NE, LT, LE, GT, GE, AND,
 OR, NOT, NULL, TRUE, FALSE, UMINUS, RETURN;
 
-terminal String ID, STRING_CONST;
-terminal String INT_CONST;
-terminal float FLOAT_CONST;
+terminal String ID, STRING_CONST, INT_CONST, FLOAT_CONST;
+terminal boolean TRUE, FALSE; //TODO da vedere boolean
 
 /* Non terminals */
 nonterminal Expr Expr;
@@ -130,12 +129,12 @@ AssignStat ::= IdList:ilist ASSIGN  ExprList:elist {:RESULT= new AssignOP(ilist,
 CallProc ::= ID:val LPAR ExprList:elist RPAR {: RESULT= new CallProcOP(val, elist);:}
    | ID:val LPAR RPAR       {: RESULT= new CallProcOP(val) ;:}
    ;
-Expr ::= NULL               {: RESULT=null;:}
-   | TRUE                   {: RESULT=new Expr(true) ;:}
-   | FALSE                  {: RESULT=new Expr(false) ;:}
-   | INT_CONST:val          {: int x= Integer.parseInt(val); RESULT=new Expr(x) ;:}
-   | FLOAT_CONST:val        {: RESULT=new Expr(val) ;:}
-   | STRING_CONST:val       {: RESULT=new Expr(val) ;:}
+Expr ::= NULL               {: RESULT=new Null();:}
+   | TRUE                   {: RESULT=new Bool(true) ;:}
+   | FALSE                  {: RESULT=new Bool(false) ;:}
+   | INT_CONST:val          {: RESULT=new IntConst(Integer.parseInt(val)) ;:}
+   | FLOAT_CONST:val        {: RESULT=new FloatConst(Float.parseFloat(val)) ;:}
+   | STRING_CONST:val       {: RESULT=new StringConst(val) ;:}
    | ID:val                 {: RESULT= new Id(val) ;:}
    | CallProc:c             {: RESULT=new Expr(c); :}
    | Expr:e  PLUS Expr:ee   {: RESULT= new PlusOP(e,ee); :}

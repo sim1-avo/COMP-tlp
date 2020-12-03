@@ -32,5 +32,10 @@ public interface Visitor {
     public Object visit(VarDeclOP c);
     public Object visit(WhileOP c);
     public Object visit(WriteOP c);
+    public Object visit(StringConst c);
+    public Object visit(IntConst c);
+    public Object visit(Bool c);
+    public Object visit(Null c);
+    public Object visit(FloatConst c);
 
 }
