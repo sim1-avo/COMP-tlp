@@ -30,13 +30,14 @@ public class GenerateXML implements Visitor{
             programOP.appendChild(l);
         }
 
+
         for (ProcOP var: p.getProcList()) {
             Element r= (Element) var.accept(this);
-            //TODO
+            programOP.appendChild(r);
         }
-        //TODO right
 
-        return 0;
+
+        return programOP;
     }
 
     @Override
@@ -53,8 +54,27 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(AssignOP a) {
+        Element assignOP= document.createElement("AssignOP");
+        String id_tot="";
+        for(Id id : a.getIlist()) {
+            String s= (String) id.accept(this);
+            id_tot.concat(s);
+            id_tot.concat(" ");
+        }
+        assignOP.appendChild(document.createTextNode(id_tot));
 
-        return null;
+        Element exprList =document.createElement("ExprList");
+        for(Expr e: a.getElist()) {
+            Element exprOP= document.createElement("ExprOP");
+            Object o = e.accept(this);
+            if(o instanceof String) exprOP.appendChild(document.createTextNode(o.toString()));
+            if(o instanceof Element) exprOP.appendChild((Element)o);
+            exprList.appendChild(exprOP);
+        }
+
+        assignOP.appendChild(exprList);
+
+        return assignOP;
     }
 
     @Override
@@ -194,17 +214,14 @@ public class GenerateXML implements Visitor{
 
 
         for(ElifOP elif: c.getElList()){
-            Object elf= elif.accept(this);
-            //TODO
+            Element elf= (Element)elif.accept(this);
+            ifOP.appendChild(elf);
         }
         if(c.getEl()!=null) {
-            Object elseop = c.getEl().accept(this);
+            Element elseop =(Element) c.getEl().accept(this);
+            ifOP.appendChild(elseop);
         }
-        //TODO
-
-
-
-        return null;
+        return ifOP;
     }
 
     @Override
@@ -314,10 +331,9 @@ public class GenerateXML implements Visitor{
             procBodyOP.appendChild(l);
         }
 
-        for(Stat s : pb.getsList().getStatList()) {
-            Object o=s.accept(this);
-            //TODO
-        }
+        Element bodyOP=(Element)pb.getsList().accept(this);
+        procBodyOP.appendChild(bodyOP);
+
         Element exprList = document.createElement("ExprOPList");
         for(Expr e : pb.getRe()) {
             Element exprOP= document.createElement("ExprOP");
@@ -344,10 +360,10 @@ public class GenerateXML implements Visitor{
         }
         Element resultTypeListOp = document.createElement("ResultTypeListOp");
         resultTypeListOp.appendChild(document.createTextNode(resultType));
-        Object last= p.getProcBodyOP().accept(this);
-        //TODO
+        Element last= (Element)p.getProcBodyOP().accept(this);
+        procOP.appendChild(last);
 
-        return null;
+        return procOP;
     }
 
     @Override
@@ -364,7 +380,18 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(ReturnExprsOP c) {
-        return null;
+        Element returnExpr= document.createElement("ReturnExpr");
+        Element exprList= document.createElement("ExprListOP");
+        for(Expr e : c.getExprList()) {
+            Element exprOP= document.createElement("ExprOP");
+            Object o=e.accept(this);
+            if(o instanceof String){ exprOP.appendChild(document.createTextNode(o.toString()));}
+            if(o instanceof Element){ exprOP.appendChild((Element)o);}
+            exprList.appendChild(exprOP);
+        }
+        returnExpr.appendChild(exprList);
+
+        return returnExpr;
     }
 
     @Override
@@ -416,7 +443,20 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(WhileOP c) {
-        return null;
+        Element whileOP=document.createElement("WhileOP");
+        if(c.getsList1() != null ) {
+            Element bd=(Element) c.getsList1().accept(this);
+            whileOP.appendChild(bd);
+        }
+        Object o = c.getE().accept(this);
+        Element exprOP=document.createElement("ExprOP");
+        if(o instanceof String){ exprOP.appendChild(document.createTextNode(o.toString()));}
+        if(o instanceof Element){ exprOP.appendChild((Element)o);}
+        whileOP.appendChild(exprOP);
+        Element bd1=(Element) c.getsList2().accept(this);
+        whileOP.appendChild(bd1);
+
+        return whileOP;
     }
 
     @Override
@@ -430,6 +470,8 @@ public class GenerateXML implements Visitor{
             if(o instanceof Element){ exprOP.appendChild((Element)o);}
             exprList.appendChild(exprOP);
         }
+        writeOP.appendChild(exprList);
+
         return writeOP;
     }
 
