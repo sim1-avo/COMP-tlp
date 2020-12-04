@@ -42,10 +42,12 @@ public class GenerateXML implements Visitor{
     @Override
     public Object visit(AndOP a) {
         Element andOP = document.createElement("AndOP");
-        Element e= (Element) a.getE().accept(this);
-        Element e1= (Element) a.getE1().accept(this);
-        andOP.appendChild(e);
-        andOP.appendChild(e1);
+        Object e= a.getE().accept(this);
+        if(e instanceof String){andOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){andOP.appendChild((Element)e);}
+        Object e1= a.getE1().accept(this);
+        if(e1 instanceof String){andOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){andOP.appendChild((Element)e1);}
         return andOP;
     }
 
@@ -57,59 +59,88 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(BodyOP b) {
-        return null;
+        Element bodyop= document.createElement("BodyOP");
+        for(Stat s:b.getStatList()){
+            Element stat= (Element) s.accept(this);
+            bodyop.appendChild(stat);
+        }
+
+        return bodyop;
     }
 
     @Override
     public Object visit(CallProcOP cp) {
         Element callProcOP =document.createElement("CallProcOP");
         callProcOP.appendChild(document.createTextNode("(ID,\""+cp.getVal()+"\")"));
+        Element exprOPList= document.createElement("ExprOPList");
         for(Expr e : cp.getElist()) {
+            Element exprOP= document.createElement("ExprOP");
             Object o = e.accept(this);
-            //TODO
+            if(o instanceof String){exprOP.appendChild(document.createTextNode(o.toString()));}
+            if(o instanceof Element){exprOP.appendChild((Element) o);}
+            exprOPList.appendChild(exprOP);
         }
-        //TODO
-        return null;
+        callProcOP.appendChild(exprOPList);
+        return callProcOP;
     }
 
     @Override
     public Object visit(DivOP d) {
         Element divOP= document.createElement("DivOP");
-        Element e= (Element) d.getE().accept(this);
-        Element e1= (Element) d.getE1().accept(this);
-        divOP.appendChild(e);
-        divOP.appendChild(e1);
+        Object e= d.getE().accept(this);
+        if(e instanceof String){divOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){divOP.appendChild((Element)e);}
+        Object e1= d.getE1().accept(this);
+        if(e1 instanceof String){divOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){divOP.appendChild((Element)e1);}
         return divOP;
     }
 
     @Override
     public Object visit(ElifOP c) {
-        return null;
+        Element elifop= document.createElement("ElifOP");
+        Element exprop= document.createElement("ExprOP");
+        Object o= c.getE().accept(this);
+        if(o instanceof String){exprop.appendChild(document.createTextNode(o.toString()));}
+        if(o instanceof Element){exprop.appendChild((Element)o);}
+        elifop.appendChild(exprop);
+
+        Element bodyop= (Element) c.getsList().accept(this);
+        elifop.appendChild(bodyop);
+
+
+        return elifop;
     }
 
     @Override
     public Object visit(ElseOP c) {
-        return null;
+        Element elseop= document.createElement("ElseOP");
+        Element bodyop= (Element) c.getsList().accept(this);
+        elseop.appendChild(bodyop);
+
+        return elseop;
     }
 
     @Override
     public Object visit(EqualsOP d) {
         Element eqOP= document.createElement("EqualsOP");
-        Element e= (Element) d.getE().accept(this);
-        Element e1= (Element) d.getE1().accept(this);
-        eqOP.appendChild(e);
-        eqOP.appendChild(e1);
+        Object e= d.getE().accept(this);
+        if(e instanceof String){eqOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){eqOP.appendChild((Element)e);}
+        Object e1= d.getE1().accept(this);
+        if(e1 instanceof String){eqOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){eqOP.appendChild((Element)e1);}
         return eqOP;
     }
 
     @Override
     public Object visit(Expr e) {
+        Element exprOP = document.createElement("ExprOP");
         if(e.getCp() != null){
-            Object o= e.getCp().accept(this);
-            //TODO
+            Element el= (Element) e.getCp().accept(this);
+            exprOP.appendChild(el);
+            return exprOP;
         }
-
-        //TODO float e int e boolean
 
         return null;
     }
@@ -117,20 +148,24 @@ public class GenerateXML implements Visitor{
     @Override
     public Object visit(GreaterEqualsOP ge) {
         Element geOP= document.createElement("GreaterEqualsOP");
-        Element e= (Element) ge.getE().accept(this);
-        Element e1= (Element) ge.getE1().accept(this);
-        geOP.appendChild(e);
-        geOP.appendChild(e1);
+        Object e= ge.getE().accept(this);
+        if(e instanceof String){geOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){geOP.appendChild((Element)e);}
+        Object e1= ge.getE1().accept(this);
+        if(e1 instanceof String){geOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){geOP.appendChild((Element)e1);}
         return geOP;
     }
 
     @Override
     public Object visit(GreaterThanOP gt) {
         Element gtOP= document.createElement("GreaterThanOP");
-        Element e= (Element) gt.getE().accept(this);
-        Element e1= (Element) gt.getE1().accept(this);
-        gtOP.appendChild(e);
-        gtOP.appendChild(e1);
+        Object e= gt.getE().accept(this);
+        if(e instanceof String){gtOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){gtOP.appendChild((Element)e);}
+        Object e1= gt.getE1().accept(this);
+        if(e1 instanceof String){gtOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){gtOP.appendChild((Element)e1);}
         return gtOP;
     }
 
@@ -147,46 +182,79 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(IfOP c) {
+        Element ifOP= document.createElement("IfOP");
+        Object o=c.getE().accept(this);
+        Element e= document.createElement("ExprOP");
+        if(o instanceof String){e.appendChild(document.createTextNode(o.toString()));}
+        if(o instanceof Element){e.appendChild((Element)o);}
+        ifOP.appendChild(e);
+
+        Element bodyop=(Element) c.getsList().accept(this);
+        ifOP.appendChild(bodyop);
+
+
+        for(ElifOP elif: c.getElList()){
+            Object elf= elif.accept(this);
+            //TODO
+        }
+        if(c.getEl()!=null) {
+            Object elseop = c.getEl().accept(this);
+        }
+        //TODO
+
+
+
         return null;
     }
 
     @Override
     public Object visit(LessEqualsOP le) {
         Element leOP= document.createElement("LessEqualsOP");
-        Element e= (Element)  le.getE().accept(this);
-        Element e1= (Element) le.getE1().accept(this);
-        leOP.appendChild(e);
-        leOP.appendChild(e1);
+        Object e= le.getE().accept(this);
+        if(e instanceof String){leOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){leOP.appendChild((Element)e);}
+        Object e1= le.getE1().accept(this);
+        if(e1 instanceof String){leOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){leOP.appendChild((Element)e1);}
         return leOP;
+
+
     }
+
 
     @Override
     public Object visit(LessThanOP lt) {
         Element ltOP= document.createElement("LessThanOP");
-        Element e= (Element) lt.getE().accept(this);
-        Element e1= (Element) lt.getE1().accept(this);
-        ltOP.appendChild(e);
-        ltOP.appendChild(e1);
+        Object e= lt.getE().accept(this);
+        if(e instanceof String){ltOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){ltOP.appendChild((Element)e);}
+        Object e1= lt.getE1().accept(this);
+        if(e1 instanceof String){ltOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){ltOP.appendChild((Element)e1);}
         return ltOP;
     }
 
     @Override
     public Object visit(MinusOP m) {
         Element mOP= document.createElement("MinusOP");
-        Element e= (Element) m.getE().accept(this);
-        Element e1= (Element) m.getE1().accept(this);
-        mOP.appendChild(e);
-        mOP.appendChild(e1);
+        Object e= m.getE().accept(this);
+        if(e instanceof String){mOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){mOP.appendChild((Element)e);}
+        Object e1= m.getE1().accept(this);
+        if(e1 instanceof String){mOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){mOP.appendChild((Element)e1);}
         return mOP;
     }
 
     @Override
     public Object visit(NotEqualsOP ne) {
         Element neOP= document.createElement("NotEqualsOP");
-        Element e= (Element) ne.getE().accept(this);
-        Element e1= (Element) ne.getE1().accept(this);
-        neOP.appendChild(e);
-        neOP.appendChild(e1);
+        Object e= ne.getE().accept(this);
+        if(e instanceof String){neOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){neOP.appendChild((Element)e);}
+        Object e1= ne.getE1().accept(this);
+        if(e1 instanceof String){neOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){neOP.appendChild((Element)e1);}
         return neOP;
     }
 
@@ -199,10 +267,12 @@ public class GenerateXML implements Visitor{
     @Override
     public Object visit(OrOP or) {
         Element orOP= document.createElement("OrOP");
-        Element e= (Element) or.getE().accept(this);
-        Element e1= (Element) or.getE1().accept(this);
-        orOP.appendChild(e);
-        orOP.appendChild(e1);
+        Object e= or.getE().accept(this);
+        if(e instanceof String){orOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){orOP.appendChild((Element)e);}
+        Object e1= or.getE1().accept(this);
+        if(e1 instanceof String){orOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){orOP.appendChild((Element)e1);}
         return orOP;
     }
 
@@ -224,6 +294,18 @@ public class GenerateXML implements Visitor{
     }
 
     @Override
+    public Object visit(PlusOP p) {
+        Element plusOP= document.createElement("OrOP");
+        Object e= p.getE().accept(this);
+        if(e instanceof String){plusOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){plusOP.appendChild((Element)e);}
+        Object e1= p.getE1().accept(this);
+        if(e1 instanceof String){plusOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){plusOP.appendChild((Element)e1);}
+        return plusOP;
+    }
+
+    @Override
     public Object visit(ProcBodyOP pb) {
         Element procBodyOP = document.createElement("ProcBodyOP");
 
@@ -236,13 +318,16 @@ public class GenerateXML implements Visitor{
             Object o=s.accept(this);
             //TODO
         }
-
+        Element exprList = document.createElement("ExprOPList");
         for(Expr e : pb.getRe()) {
+            Element exprOP= document.createElement("ExprOP");
             Object o=e.accept(this);
-            //TODO
+            if(o instanceof String){ exprOP.appendChild(document.createTextNode(o.toString()));}
+            if(o instanceof Element){ exprOP.appendChild((Element)o);}
+            exprList.appendChild(exprOP);
         }
-        //TODO
-        return null;
+        procBodyOP.appendChild(exprList);
+        return procBodyOP;
     }
 
     @Override
@@ -267,7 +352,14 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(ReadOP c) {
-        return null;
+        Element readOP= document.createElement("ReadlnOP");
+        Element idList= document.createElement("IdList");
+        for(Id i:c.getIdList()){
+            String s= i.accept(this).toString();
+            idList.appendChild(document.createTextNode(s));
+        }
+        readOP.appendChild(idList);
+        return readOP;
     }
 
     @Override
@@ -277,20 +369,26 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(Stat s) {
-        Object o= s.getCp().accept(this);
-        //TODO
+        Element stat = document.createElement("Stat");
+        if(s.getCp() != null){
+            Element el= (Element) s.getCp().accept(this);
+            stat.appendChild(el);
+            return stat;
+        }
 
         return null;
     }
 
     @Override
     public Object visit(TimesOP t) {
-        Element timesOP= document.createElement("TimesOP");
-        Element e= (Element) t.getE().accept(this);
-        Element e1= (Element) t.getE1().accept(this);
-        timesOP.appendChild(e);
-        timesOP.appendChild(e1);
-        return timesOP;
+        Element tOP= document.createElement("TimesOP");
+        Object e= t.getE().accept(this);
+        if(e instanceof String){tOP.appendChild(document.createTextNode(e.toString()));}
+        if(e instanceof Element){tOP.appendChild((Element)e);}
+        Object e1= t.getE1().accept(this);
+        if(e1 instanceof String){tOP.appendChild(document.createTextNode(e1.toString()));}
+        if(e1 instanceof Element){tOP.appendChild((Element)e1);}
+        return tOP;
     }
 
     @Override
@@ -323,42 +421,41 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(WriteOP c) {
-        return null;
+        Element writeOP= document.createElement("WriteOP");
+        Element exprList= document.createElement("ExprListOP");
+        for(Expr e : c.getExprList()) {
+            Element exprOP= document.createElement("ExprOP");
+            Object o=e.accept(this);
+            if(o instanceof String){ exprOP.appendChild(document.createTextNode(o.toString()));}
+            if(o instanceof Element){ exprOP.appendChild((Element)o);}
+            exprList.appendChild(exprOP);
+        }
+        return writeOP;
     }
 
     @Override
     public Object visit(StringConst sc) {
-        Element e= document.createElement("ExprOP");
-        e.appendChild(document.createTextNode("(STRING_CONST, \""+ sc.getS() +"\")"));
-        return e;
+        return "(STRING_CONST, \""+ sc.getS() +"\")";
     }
 
     @Override
     public Object visit(IntConst ic) {
-        Element e= document.createElement("ExprOP");
-        e.appendChild(document.createTextNode("(INT_CONST, \""+ ic.getVal() +"\")"));
-        return e;
+        return "(INT_CONST, \""+ ic.getVal() +"\")";
     }
 
     @Override
     public Object visit(Bool b) {
-        Element e= document.createElement("ExprOP");
-        e.appendChild(document.createTextNode("("+ b.isB()+")"));
+        return "("+ b.isB()+")";
 
-        return e;
     }
 
     @Override
     public Object visit(Null c) {
-        Element e= document.createElement("ExprOP");
-        e.appendChild(document.createTextNode(c.getN()));
-        return e;
+        return c.getN();
     }
 
     @Override
     public Object visit(FloatConst fc) {
-        Element e= document.createElement("ExprOP");
-        e.appendChild(document.createTextNode("(FLOAT_CONST, \""+ fc.getF() +"\")"));
-        return e;
+        return "(FLOAT_CONST, \""+ fc.getF() +"\")";
     }
 }

@@ -22,6 +22,7 @@ public interface Visitor {
     public Object visit(NotOP c);
     public Object visit(OrOP c);
     public Object visit(ParDeclOP c);
+    public Object visit(PlusOP c);
     public Object visit(ProcBodyOP c);
     public Object visit(ProcOP c);
     public Object visit(ReadOP c);
