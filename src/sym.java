@@ -7,7 +7,7 @@
 public class sym {
   /* terminals */
   public static final int GE = 34;
-  public static final int UMINUS = 41;
+  public static final int UMINUS = 39;
   public static final int SEMI = 2;
   public static final int INT = 4;
   public static final int MINUS = 26;
@@ -21,17 +21,17 @@ public class sym {
   public static final int COMMA = 3;
   public static final int FI = 17;
   public static final int DIV = 28;
-  public static final int FLOAT_CONST = 46;
+  public static final int FLOAT_CONST = 44;
   public static final int PLUS = 25;
   public static final int ASSIGN = 24;
   public static final int IF = 14;
-  public static final int ID = 43;
+  public static final int ID = 41;
   public static final int LE = 32;
   public static final int EOF = 0;
-  public static final int RETURN = 42;
+  public static final int RETURN = 40;
   public static final int OD = 21;
-  public static final int INT_CONST = 45;
-  public static final int TRUE = 39;
+  public static final int TRUE = 45;
+  public static final int INT_CONST = 43;
   public static final int error = 1;
   public static final int NULL = 38;
   public static final int VOID = 13;
@@ -48,8 +48,8 @@ public class sym {
   public static final int LPAR = 8;
   public static final int PROC = 11;
   public static final int STRING = 5;
-  public static final int FALSE = 40;
-  public static final int STRING_CONST = 44;
+  public static final int FALSE = 46;
+  public static final int STRING_CONST = 42;
   public static final int GT = 33;
   public static final int ELIF = 16;
   public static final int DO = 20;
@@ -93,14 +93,14 @@ public class sym {
   "OR",
   "NOT",
   "NULL",
-  "TRUE",
-  "FALSE",
   "UMINUS",
   "RETURN",
   "ID",
   "STRING_CONST",
   "INT_CONST",
-  "FLOAT_CONST"
+  "FLOAT_CONST",
+  "TRUE",
+  "FALSE"
   };
 }
 
