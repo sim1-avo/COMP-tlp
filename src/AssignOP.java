@@ -18,7 +18,7 @@ public class AssignOP extends Stat {
         } else {
             boolean hasCallProc= false;
             for(Expr e: elist) {
-                if (e instanceof Expr) hasCallProc=true;
+                if (e.getCp()!=null) hasCallProc=true;
             }
             if(hasCallProc) {
                 int index_expr=0;

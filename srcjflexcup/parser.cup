@@ -23,7 +23,7 @@ nonterminal BodyOP StatList;
 nonterminal String ResultType;
 nonterminal ArrayList<Id> IdList;
 nonterminal ParDeclOP ParDecl;
-nonterminal ArrayList<ParDeclOP> ;
+nonterminal ArrayList<ParDeclOP> ParamDeclList;
 nonterminal ArrayList<Expr> ExprList;
 nonterminal ArrayList<Expr> ReturnExprs;
 nonterminal ArrayList<String> ResultTypeList;
@@ -148,8 +148,8 @@ Expr ::= NULL               {: RESULT=new Null();:}
    | Expr:e  LT Expr:ee     {: RESULT= new LessThanOP(e,ee); :}
    | Expr:e  LE Expr:ee     {: RESULT= new LessEqualsOP(e,ee); :}
    | Expr:e  EQ Expr:ee     {: RESULT= new EqualsOP(e,ee); :}
-   | Expr:e  NE Expr:ee     {: RESULT= new NotEqualsOP(e,ee); :}
-   | MINUS INT_CONST:e      {: RESULT= new UMinusOP(-Integer.parseInt(e)); :}  %prec UMINUS
-   | MINUS FLOAT_CONST:e    {: RESULT= new UMinusOP(-Float.parseFloat(e)); :}  %prec UMINUS
+   | Expr:e  NE Expr:ee    {: RESULT= new NotEqualsOP(e,ee); :}
+   | MINUS INT_CONST:e     {: RESULT= new UMinusOP(-Integer.parseInt(e)); :}   %prec UMINUS
+   | MINUS FLOAT_CONST:e     {: RESULT= new UMinusOP(-Float.parseFloat(e)); :}   %prec UMINUS
    | NOT Expr:e   {: RESULT= new NotOP(e); :}
     ;

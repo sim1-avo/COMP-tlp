@@ -1,3 +1,4 @@
+import java.io.EOFException;
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -289,8 +290,12 @@ public class GenerateXML implements Visitor{
 
     @Override
     public Object visit(NotOP n) {
-        return null;
-        //TODO
+        Element notOP= document.createElement("NotOP");
+        Object o=n.getNe().accept(this);
+        if(o instanceof String){ notOP.appendChild(document.createTextNode(o.toString()));}
+        if(o instanceof Element){notOP.appendChild((Element)o);}
+
+        return notOP;
     }
 
     @Override

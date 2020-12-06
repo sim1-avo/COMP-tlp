@@ -1,21 +1,21 @@
 import java.util.ArrayList;
 
 public class NotOP extends Expr {
-    private String ne;
+    private Expr ne;
 
     public NotOP(Expr expr){
-        this.ne="!"+expr;
+        this.ne=expr;
     }
 
     public Object accept(Visitor v){
         return v.visit(this);
     }
 
-    public String getNe() {
+    public Expr getNe() {
         return ne;
     }
 
-    public void setNe(String ne) {
+    public void setNe(Expr ne) {
         this.ne = ne;
     }
 }
