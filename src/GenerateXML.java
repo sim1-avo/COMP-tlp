@@ -54,21 +54,24 @@ public class GenerateXML implements Visitor{
         return andOP;
     }
 
-    //TODO
     @Override
     public Object visit(AssignOP a) {
-        Element assignListOP= document.createElement("AssignListOP");
-        for(int i=0; i< a.getA().size(); i++) {
-            Element assignOP= document.createElement("AssignOP");
-            String s= (String)  a.getA().get(i).getId().accept(this);
-            Object e= a.getA().get(i).getE().accept(this);
-            assignOP.appendChild(document.createTextNode(s));
-            if(e instanceof String) assignOP.appendChild(document.createTextNode((String)e));
-            if(e instanceof Element)  assignOP.appendChild((Element)e);
-            assignListOP.appendChild(assignOP);
+        Element assignOP= document.createElement("AssignOP");
+        Element listId= document.createElement("ListID");
+        for(Id id : a.getIlist()) {
+            String s= (String) id.accept(this);
+            listId.appendChild(document.createTextNode(s));
         }
+        Element listExpr=document.createElement("ListExpr");
+        for(Expr e : a.getElist()) {
+            Object o = e.accept(this);
+            if(o instanceof String) listExpr.appendChild(document.createTextNode((String)o));
+            if(o instanceof Element)  listExpr.appendChild((Element)o);
+        }
+        assignOP.appendChild(listId);
+        assignOP.appendChild(listExpr);
 
-        return assignListOP;
+        return assignOP;
     }
 
     @Override
@@ -448,13 +451,10 @@ public class GenerateXML implements Visitor{
     @Override
     public Object visit(UMinusOP u) {
         Element uminusOP =document.createElement("UminusOP");
-        String s="";
-        if(u.getF() != null) {
-            s=(String)u.getF().accept(this);
-        } else {
-            s=(String)u.getI().accept(this);
-        }
-        uminusOP.appendChild(document.createTextNode(s));
+        Object o = u.getE().accept(this);
+        if(o instanceof String) uminusOP.appendChild(document.createTextNode(o.toString()));
+        else uminusOP.appendChild((Element)o);
+
         return uminusOP;
     }
 

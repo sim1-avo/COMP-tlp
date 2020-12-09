@@ -1,28 +1,17 @@
 public class UMinusOP extends Expr{
 
-    private IntConst i;
-    private FloatConst f;
-    public UMinusOP(int i){
-        this.i=new IntConst(i);
-    }
-    public UMinusOP(float f){
-        this.f=new FloatConst(f);
+    private Expr e;
+
+    public UMinusOP(Expr e){
+        this.e=e;
     }
 
-    public IntConst getI() {
-        return i;
+    public Expr getE() {
+        return e;
     }
 
-    public void setI(IntConst i) {
-        this.i = i;
-    }
-
-    public FloatConst getF() {
-        return f;
-    }
-
-    public void setF(FloatConst f) {
-        this.f = f;
+    public void setE(Expr e) {
+        this.e = e;
     }
 
     public Object accept(Visitor v){

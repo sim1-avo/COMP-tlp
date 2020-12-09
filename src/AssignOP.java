@@ -1,14 +1,35 @@
 import java.util.ArrayList;
 
 public class AssignOP extends Stat {
+    private ArrayList<Id> ilist;
+    private ArrayList<Expr> elist;
+
+    /* deprecated */
     private ArrayList<AssignSingle> a;
 
     public AssignOP(ArrayList<Id> ilist, ArrayList<Expr> elist) {
         super();
-        a=new ArrayList<AssignSingle>();
-        doSingleAssign(ilist, elist);
+        this.ilist=ilist;
+        this.elist=elist;
     }
 
+    public ArrayList<Id> getIlist() {
+        return ilist;
+    }
+
+    public void setIlist(ArrayList<Id> ilist) {
+        this.ilist = ilist;
+    }
+
+    public ArrayList<Expr> getElist() {
+        return elist;
+    }
+
+    public void setElist(ArrayList<Expr> elist) {
+        this.elist = elist;
+    }
+
+    /* deprecated */
     public void doSingleAssign(ArrayList<Id> ilist, ArrayList<Expr> elist) {
         if(ilist.size() == elist.size()) {
             for (int i=0; i<ilist.size(); i++) {
