@@ -351,9 +351,10 @@ public class GenerateXML implements Visitor{
             procBodyOP.appendChild(l);
         }
 
-        Element bodyOP=(Element)pb.getsList().accept(this);
-        procBodyOP.appendChild(bodyOP);
-
+        if(pb.getsList()!=null) {
+            Element bodyOP = (Element) pb.getsList().accept(this);
+            procBodyOP.appendChild(bodyOP);
+        }
         if(pb.getRe() != null) {
             Element exprList = document.createElement("ExprOPList");
             for(Expr e : pb.getRe()) {

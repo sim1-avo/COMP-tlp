@@ -10,6 +10,10 @@ public class ProcBodyOP {
         this.sList= sList;
         this.re = re;
     }
+    public ProcBodyOP(ArrayList<VarDeclOP> vdList, ArrayList<Expr> re){
+        this.vdList= vdList;
+        this.re = re;
+    }
 
     public ArrayList<VarDeclOP> getVdList() {
         return vdList;

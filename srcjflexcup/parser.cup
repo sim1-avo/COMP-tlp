@@ -68,7 +68,9 @@ IdListInit ::= ID:val                                  {: ArrayList<IdListInitOP
    | IdListInit:iListInit COMMA ID:val ASSIGN Expr:e   {: iListInit.add(new IdListInitOP(new Id(val), e)); RESULT= iListInit; :}
    ;
 Proc ::= PROC ID:val LPAR ParamDeclList:pdList RPAR ResultTypeList:rtList COLON VarDeclList:vdList StatList:sList RETURN ReturnExprs:re CORP SEMI       {:RESULT= new ProcOP(new Id(val), pdList, rtList, new ProcBodyOP( vdList, sList, re));:}
+   | PROC ID:val LPAR ParamDeclList:pdList RPAR ResultTypeList:rtList COLON VarDeclList:vdList  RETURN ReturnExprs:re CORP SEMI       {:RESULT= new ProcOP(new Id(val), pdList, rtList, new ProcBodyOP( vdList, re));:}
    | PROC ID:val LPAR RPAR ResultTypeList:rtList COLON VarDeclList:vdList StatList:sList RETURN ReturnExprs:re CORP SEMI                                {:RESULT= new ProcOP(new Id(val), rtList, new ProcBodyOP( vdList, sList, re));:}
+   | PROC ID:val LPAR RPAR ResultTypeList:rtList COLON VarDeclList:vdList  RETURN ReturnExprs:re CORP SEMI                                {:RESULT= new ProcOP(new Id(val), rtList, new ProcBodyOP( vdList, re));:}
    ;
 ResultTypeList ::= ResultType:rt                  {: ArrayList<String> list= new ArrayList<String>(); list.add(rt); RESULT= list;:}
    | ResultType:rt COMMA ResultTypeList:rtList    {: rtList.add(0,rt); RESULT=rtList; :}
@@ -152,3 +154,5 @@ Expr ::= NULL               {: RESULT=new Null();:}
    | MINUS Expr:e     {: RESULT= new UMinusOP(e); :}   %prec UMINUS
    | NOT Expr:e   {: RESULT= new NotOP(e); :}
     ;
+
+

@@ -21,7 +21,9 @@ public class Tester {
         Reader reader = new InputStreamReader(in);
 
         parser p = new parser(new Yylex(reader));
+        System.out.println(p.debug_parse());
         ProgramOP pOP= (ProgramOP) p.parse().value;
+
 
         GenerateXML xml = new GenerateXML();
         Document xml_generated = (Document)pOP.accept(xml);
