@@ -120,24 +120,31 @@ TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 
   /* whitespace */
   {WhiteSpace} { /* ignore */ }
+
+  /* comments */
+  "/*" {yybegin(COMMENTS);}
 }
 
 <STRING> {
 \"          { yybegin(YYINITIAL);
                 return generateToken(sym.STRING_CONST,
                 string.toString()); }
-[^\n\r\"\\]+    { string.append( yytext() ); }
+<<EOF>>     { throw new Error("Errore! Stringa costante non completata.");}
+
+[^\"\\]+    { string.append( yytext() ); }
 \\t     { string.append("\t"); }
 \\n     { string.append("\n"); }
 \\r     { string.append("\r"); }
 \\\"    { string.append("\""); }
 \\      { string.append("\\"); }
-<<EOF>>     { throw new Error("Errore! Stringa costante non completata."); }
+
 }
 
 <COMMENTS> {
-{TraditionalComment} { /* Ignore */ }
+
+"*/" { yybegin(YYINITIAL);}
 <<EOF>>     {throw new Error("Errore! Commento non chiuso.");}
+[^] { /* Ignore */ }
 }
 
 
